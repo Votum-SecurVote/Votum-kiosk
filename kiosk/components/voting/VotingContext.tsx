@@ -25,8 +25,6 @@ interface VotingContextType {
   setVerified: (verified: boolean) => void
   selectedCandidate: Candidate | null
   setSelectedCandidate: (candidate: Candidate | null) => void
-  highContrast: boolean
-  setHighContrast: (value: boolean) => void
   language: string
   setLanguage: (lang: string) => void
   reset: () => void
@@ -40,7 +38,6 @@ export function VotingProvider({ children }: { children: React.ReactNode }) {
   const [selectedCandidate, setSelectedCandidate] = useState<Candidate | null>(
     null
   )
-  const [highContrast, setHighContrast] = useState(false)
   const [language, setLanguage] = useState("en")
 
   const reset = () => {
@@ -58,8 +55,6 @@ export function VotingProvider({ children }: { children: React.ReactNode }) {
         setVerified,
         selectedCandidate,
         setSelectedCandidate,
-        highContrast,
-        setHighContrast,
         language,
         setLanguage,
         reset,

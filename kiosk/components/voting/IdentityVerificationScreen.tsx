@@ -113,21 +113,18 @@ export function IdentityVerificationScreen() {
         {/* Step Indicator */}
         <div className="mb-8 flex items-center justify-center gap-2">
           <div
-            className={`h-3 w-3 rounded-full ${
-              step === "aadhaar" ? "bg-primary" : "bg-accent"
-            }`}
+            className={`h-3 w-3 rounded-full ${step === "aadhaar" ? "bg-primary" : "bg-accent"
+              }`}
           />
           <div className="h-1 w-8 bg-border" />
           <div
-            className={`h-3 w-3 rounded-full ${
-              step === "otp" ? "bg-primary" : "bg-muted"
-            }`}
+            className={`h-3 w-3 rounded-full ${step === "otp" ? "bg-primary" : "bg-muted"
+              }`}
           />
           <div className="h-1 w-8 bg-border" />
           <div
-            className={`h-3 w-3 rounded-full ${
-              step === "face" ? "bg-primary" : "bg-muted"
-            }`}
+            className={`h-3 w-3 rounded-full ${step === "face" ? "bg-primary" : "bg-muted"
+              }`}
           />
         </div>
 
@@ -146,7 +143,7 @@ export function IdentityVerificationScreen() {
                   value={aadhaar}
                   onChange={handleAadhaarChange}
                   className="touch-button w-full rounded-lg border-2 border-primary bg-input px-4 py-4 text-xl font-mono text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-                  maxLength="14"
+                  maxLength={14}
                   aria-label="Enter your 12-digit Aadhaar number"
                 />
               </div>
@@ -190,7 +187,7 @@ export function IdentityVerificationScreen() {
                     setError("")
                   }}
                   className="touch-button w-full rounded-lg border-2 border-primary bg-input px-4 py-4 text-4xl font-mono text-center text-foreground placeholder-muted-foreground tracking-widest focus:outline-none focus:ring-2 focus:ring-primary"
-                  maxLength="6"
+                  maxLength={6}
                   aria-label="Enter the 6-digit OTP"
                 />
               </div>

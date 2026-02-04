@@ -5,14 +5,10 @@ import { useVotingContext } from "@/components/voting/VotingContext"
 
 interface WelcomeScreenProps {
   onLanguageSelect: (lang: string) => void
-  onAccessibilityToggle: (enabled: boolean) => void
-  isHighContrast: boolean
 }
 
 export function WelcomeScreen({
   onLanguageSelect,
-  onAccessibilityToggle,
-  isHighContrast,
 }: WelcomeScreenProps) {
   const { setScreen } = useVotingContext()
 
@@ -31,21 +27,8 @@ export function WelcomeScreen({
         Secure Digital Voting Platform
       </p>
 
-      {/* Accessibility Controls */}
+      {/* Language Selection */}
       <div className="mb-12 flex flex-wrap items-center justify-center gap-4">
-        <Button
-          onClick={() => onAccessibilityToggle(!isHighContrast)}
-          variant="outline"
-          className="touch-button h-12 px-6 text-base"
-          aria-label={
-            isHighContrast
-              ? "Disable high contrast mode"
-              : "Enable high contrast mode"
-          }
-        >
-          {isHighContrast ? "🔆 High Contrast: ON" : "☀️ High Contrast: OFF"}
-        </Button>
-
         <select
           onChange={(e) => onLanguageSelect(e.target.value)}
           className="touch-button h-12 rounded-lg border-2 border-primary bg-secondary px-4 text-base font-medium text-primary"

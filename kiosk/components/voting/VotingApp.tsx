@@ -12,8 +12,6 @@ import { VoteSubmittedScreen } from "@/components/voting/VoteSubmittedScreen"
 function VotingAppContent() {
   const {
     screen,
-    highContrast,
-    setHighContrast,
     setLanguage,
   } = useVotingContext()
 
@@ -51,17 +49,11 @@ function VotingAppContent() {
   }, [])
 
   return (
-    <div
-      className={`min-h-screen transition-all duration-300 ${
-        highContrast ? "high-contrast" : ""
-      }`}
-    >
+    <div className="min-h-screen transition-all duration-300">
       {/* Screen Router */}
       {screen === "welcome" && (
         <WelcomeScreen
           onLanguageSelect={setLanguage}
-          onAccessibilityToggle={setHighContrast}
-          isHighContrast={highContrast}
         />
       )}
       {screen === "identity" && <IdentityVerificationScreen />}
