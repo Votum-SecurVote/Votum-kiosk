@@ -32,9 +32,9 @@ export function WelcomeScreen({ onLanguageSelect }: WelcomeScreenProps) {
           </div>
           <div>
             <h1 className="text-3xl font-black uppercase tracking-tighter italic">
-              E-VOTE <span className="text-primary">2026</span>
+              <span className="text-primary">VOTUM</span>
             </h1>
-            <p className="text-sm font-bold text-slate-400">Government of India Certification</p>
+            <p className="text-sm font-bold text-slate-400">Kiosk Voting Platform</p>
           </div>
         </div>
         <div className="hidden md:block">
@@ -121,17 +121,6 @@ export function WelcomeScreen({ onLanguageSelect }: WelcomeScreenProps) {
         </section>
       </main>
 
-      {/* 3. Global Footer */}
-      <footer className="flex items-center justify-between bg-slate-900 px-10 py-4 text-white">
-        <div className="flex gap-8 text-[10px] font-bold uppercase tracking-[0.2em] opacity-60">
-          <span>IP: 192.168.1.104</span>
-          <span>Station: ND-04</span>
-          <span>Uptime: 08:42:12</span>
-        </div>
-        <div className="text-[10px] font-bold uppercase tracking-[0.2em] opacity-60">
-          Secure Digital Ballot Box • Ver 2026.1
-        </div>
-      </footer>
     </div>
   )
 }
