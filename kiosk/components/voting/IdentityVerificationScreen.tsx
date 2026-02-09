@@ -1,55 +1,49 @@
 "use client"
 
-import React from "react"
-
-import { useState, useRef, useEffect } from "react"
+import React, { useState, useRef } from "react"
 import { Button } from "@/components/ui/button"
 import { useVotingContext } from "@/components/voting/VotingContext"
+import { ChevronRight } from "lucide-react"
 
 export function IdentityVerificationScreen() {
   const { setScreen, setVerified } = useVotingContext()
+
   const [aadhaar, setAadhaar] = useState("")
   const [otp, setOtp] = useState("")
   const [step, setStep] = useState<"aadhaar" | "otp" | "face">("aadhaar")
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
   const videoRef = useRef<HTMLVideoElement>(null)
-  const [cameraActive, setCameraActive] = useState(false)
 
   const formatAadhaar = (value: string) => {
     const digits = value.replace(/\D/g, "").slice(0, 12)
     return digits.replace(/(\d{4})(?=\d)/g, "$1 ")
   }
 
-  const handleAadhaarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setAadhaar(formatAadhaar(e.target.value))
-    setError("")
-  }
-
   const handleSendOtp = () => {
     if (aadhaar.replace(/\s/g, "").length !== 12) {
-      setError("Please enter a valid 12-digit Aadhaar number")
+      setError("ENTER VALID 12-DIGIT AADHAAR")
       return
     }
     setLoading(true)
     setTimeout(() => {
       setLoading(false)
-      setStep("otp")
       setError("")
+      setStep("otp")
     }, 1500)
   }
 
   const handleVerifyOtp = () => {
     if (otp.length !== 6) {
-      setError("Please enter a valid 6-digit OTP")
+      setError("ENTER VALID 6-DIGIT OTP")
       return
     }
     setLoading(true)
     setTimeout(() => {
       setLoading(false)
+      setError("")
       setStep("face")
       startCamera()
-      setError("")
     }, 1500)
   }
 
@@ -60,10 +54,9 @@ export function IdentityVerificationScreen() {
       })
       if (videoRef.current) {
         videoRef.current.srcObject = stream
-        setCameraActive(true)
       }
-    } catch (err) {
-      setError("Camera access denied. Please allow camera access to continue.")
+    } catch {
+      setError("CAMERA ACCESS DENIED")
     }
   }
 
@@ -77,205 +70,172 @@ export function IdentityVerificationScreen() {
   }
 
   const handleBack = () => {
+    setError("")
     if (step === "otp") {
       setStep("aadhaar")
       setOtp("")
-      setError("")
     } else if (step === "face") {
       setStep("otp")
       if (videoRef.current?.srcObject) {
         const tracks = (videoRef.current.srcObject as MediaStream).getTracks()
         tracks.forEach((track) => track.stop())
       }
-      setCameraActive(false)
-      setError("")
     } else {
       setScreen("welcome")
     }
   }
 
   return (
-    <div className="kiosk-locked flex h-screen flex-col items-center justify-center bg-background px-6 py-8 animate-fade-in">
-      <div className="w-full max-w-2xl">
-        {/* Header */}
-        <div className="mb-8 text-center">
-          <h2 className="mb-2 text-3xl font-bold text-primary md:text-4xl">
-            Identity Verification
-          </h2>
-          <p className="text-muted-foreground">
-            {step === "aadhaar" &&
-              "Enter your Aadhaar number to begin verification"}
-            {step === "otp" && "Enter the OTP sent to your registered mobile"}
-            {step === "face" && "Position your face in the frame for verification"}
+    <div className="flex h-screen flex-col bg-white text-slate-900 font-sans overflow-hidden">
+
+      {/* HEADER */}
+      <header className="flex items-center justify-between border-b-4 border-primary px-10 py-6">
+        <div className="flex items-center gap-6">
+          <div className="flex h-14 w-14 items-center justify-center bg-primary text-white">
+            <span className="text-2xl">🏛️</span>
+          </div>
+          <div>
+            <h1 className="text-2xl font-black uppercase tracking-tight italic">
+              <span className="text-primary">VOTUM</span>
+            </h1>
+            <p className="text-xs font-bold text-slate-400">
+              Kiosk Voting Platform
+            </p>
+          </div>
+        </div>
+
+        <div className="text-right">
+          <p className="text-xs font-bold uppercase text-slate-400">
+            Session Security
+          </p>
+          <p className="font-mono text-xs font-bold">
+            AES-256 ENCRYPTED
           </p>
         </div>
+      </header>
 
-        {/* Step Indicator */}
-        <div className="mb-8 flex items-center justify-center gap-2">
-          <div
-            className={`h-3 w-3 rounded-full ${step === "aadhaar" ? "bg-primary" : "bg-accent"
-              }`}
-          />
-          <div className="h-1 w-8 bg-border" />
-          <div
-            className={`h-3 w-3 rounded-full ${step === "otp" ? "bg-primary" : "bg-muted"
-              }`}
-          />
-          <div className="h-1 w-8 bg-border" />
-          <div
-            className={`h-3 w-3 rounded-full ${step === "face" ? "bg-primary" : "bg-muted"
-              }`}
-          />
-        </div>
+      {/* MAIN */}
+      <main className="flex flex-1 items-center justify-center px-6">
+        <section className="w-full max-w-2xl">
 
-        {/* Content */}
-        <div className="space-y-6">
-          {/* Aadhaar Step */}
+          {/* TITLE */}
+          <div className="mb-6">
+            <h2 className="text-3xl font-black uppercase tracking-tight text-primary mb-2">
+              Identity Verification
+            </h2>
+            <p className="text-slate-500 font-medium">
+              Step {step === "aadhaar" ? "1" : step === "otp" ? "2" : "3"} of 3
+            </p>
+          </div>
+
+          {/* STEP 1 */}
           {step === "aadhaar" && (
-            <div className="space-y-4 animate-slide-up">
-              <div>
-                <label className="mb-3 block text-lg font-semibold text-foreground">
-                  Aadhaar Number
-                </label>
-                <input
-                  type="text"
-                  placeholder="0000 0000 0000"
-                  value={aadhaar}
-                  onChange={handleAadhaarChange}
-                  className="touch-button w-full rounded-lg border-2 border-primary bg-input px-4 py-4 text-xl font-mono text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-                  maxLength={14}
-                  aria-label="Enter your 12-digit Aadhaar number"
-                />
-              </div>
-              {error && (
-                <p className="rounded-lg bg-destructive/10 p-3 text-base text-destructive">
-                  ⚠️ {error}
-                </p>
-              )}
-              <div className="flex gap-4">
-                <Button
-                  onClick={handleBack}
-                  variant="outline"
-                  className="touch-button flex-1 h-14 text-base font-semibold bg-transparent"
-                >
-                  Back
-                </Button>
-                <Button
-                  onClick={handleSendOtp}
-                  disabled={loading || aadhaar.replace(/\s/g, "").length !== 12}
-                  className="touch-button flex-1 h-14 bg-primary text-base font-semibold text-white hover:bg-primary/90 disabled:opacity-50"
-                >
-                  {loading ? "Sending..." : "Send OTP"}
-                </Button>
-              </div>
+            <div className="space-y-6">
+              <input
+                type="text"
+                placeholder="0000 0000 0000"
+                value={aadhaar}
+                onChange={(e) => setAadhaar(formatAadhaar(e.target.value))}
+                className="h-20 w-full border-4 border-slate-200 px-6 text-2xl font-black tracking-widest focus:border-primary focus:outline-none"
+              />
+
+              {error && <p className="text-red-600 font-bold uppercase">{error}</p>}
+
+              <Button
+                onClick={handleSendOtp}
+                disabled={loading}
+                className="h-20 w-full rounded-none bg-slate-900 text-2xl font-black uppercase tracking-widest text-white hover:bg-slate-800"
+              >
+                {loading ? "Sending..." : "Send OTP"}
+                <ChevronRight className="ml-4 h-8 w-8" />
+              </Button>
             </div>
           )}
 
-          {/* OTP Step */}
+          {/* STEP 2 */}
           {step === "otp" && (
-            <div className="space-y-4 animate-slide-up">
-              <div>
-                <label className="mb-3 block text-lg font-semibold text-foreground">
-                  Enter OTP
-                </label>
-                <input
-                  type="text"
-                  placeholder="000000"
-                  value={otp}
-                  onChange={(e) => {
-                    setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))
-                    setError("")
-                  }}
-                  className="touch-button w-full rounded-lg border-2 border-primary bg-input px-4 py-4 text-4xl font-mono text-center text-foreground placeholder-muted-foreground tracking-widest focus:outline-none focus:ring-2 focus:ring-primary"
-                  maxLength={6}
-                  aria-label="Enter the 6-digit OTP"
+            <div className="space-y-6">
+              <input
+                type="text"
+                placeholder="000000"
+                value={otp}
+                onChange={(e) =>
+                  setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))
+                }
+                className="h-20 w-full border-4 border-slate-200 px-6 text-3xl font-black text-center tracking-[10px] focus:border-primary focus:outline-none"
+              />
+
+              {error && <p className="text-red-600 font-bold uppercase">{error}</p>}
+
+              <Button
+                onClick={handleVerifyOtp}
+                disabled={loading}
+                className="h-20 w-full rounded-none bg-slate-900 text-2xl font-black uppercase tracking-widest text-white hover:bg-slate-800"
+              >
+                {loading ? "Verifying..." : "Verify OTP"}
+                <ChevronRight className="ml-4 h-8 w-8" />
+              </Button>
+            </div>
+          )}
+
+          {/* FACE STEP */}
+          {step === "face" && (
+            <div className="space-y-4">
+
+              {/* Smaller Camera Frame */}
+              <div className="flex justify-center">
+                <video
+                  ref={videoRef}
+                  autoPlay
+                  playsInline
+                  className="
+                    w-full 
+                    max-w-sm 
+                    aspect-[4/5] 
+                    max-h-[38vh] 
+                    border-4 
+                    border-primary 
+                    object-cover
+                  "
                 />
               </div>
-              {error && (
-                <p className="rounded-lg bg-destructive/10 p-3 text-base text-destructive">
-                  ⚠️ {error}
-                </p>
-              )}
-              <p className="text-center text-sm text-muted-foreground">
-                OTP sent to your registered mobile number
-              </p>
-              <div className="flex gap-4">
-                <Button
-                  onClick={handleBack}
-                  variant="outline"
-                  className="touch-button flex-1 h-14 text-base font-semibold bg-transparent"
-                >
-                  Back
-                </Button>
-                <Button
-                  onClick={handleVerifyOtp}
-                  disabled={loading || otp.length !== 6}
-                  className="touch-button flex-1 h-14 bg-primary text-base font-semibold text-white hover:bg-primary/90 disabled:opacity-50"
-                >
-                  {loading ? "Verifying..." : "Verify"}
-                </Button>
-              </div>
-            </div>
-          )}
-
-          {/* Face Verification Step */}
-          {step === "face" && (
-            <div className="space-y-4 animate-slide-up">
-              <div className="flex items-center justify-center">
-                <div className="relative">
-                  <video
-                    ref={videoRef}
-                    autoPlay
-                    playsInline
-                    className="h-96 w-96 rounded-lg border-4 border-primary object-cover"
-                  />
-                  <div className="absolute inset-0 rounded-lg border-4 border-transparent" />
-                </div>
-              </div>
-
-              <div className="rounded-lg bg-accent/10 p-4 text-center text-base text-accent-foreground">
-                {loading ? "🔍 Verifying your face..." : "✓ Face detection ready"}
-              </div>
 
               {error && (
-                <p className="rounded-lg bg-destructive/10 p-3 text-base text-destructive">
-                  ⚠️ {error}
+                <p className="text-red-600 font-bold uppercase text-center">
+                  {error}
                 </p>
               )}
 
-              <div className="flex gap-4">
-                <Button
-                  onClick={handleBack}
-                  variant="outline"
-                  className="touch-button flex-1 h-14 text-base font-semibold bg-transparent"
-                  disabled={loading}
-                >
-                  Back
-                </Button>
-                <Button
-                  onClick={handleCompleteFaceVerification}
-                  disabled={loading}
-                  className="touch-button flex-1 h-14 bg-primary text-base font-semibold text-white hover:bg-primary/90 disabled:opacity-50"
-                >
-                  {loading ? "Processing..." : "Complete Verification"}
-                </Button>
-              </div>
+              <Button
+                onClick={handleCompleteFaceVerification}
+                disabled={loading}
+                className="h-16 w-full rounded-none bg-slate-900 text-lg font-black uppercase tracking-widest text-white hover:bg-slate-800"
+              >
+                {loading ? "Processing..." : "Complete Verification"}
+              </Button>
             </div>
           )}
-        </div>
 
-        {/* Security Note */}
-        <div className="mt-12 rounded-lg border border-border bg-muted/30 p-4 text-center text-sm text-muted-foreground">
-          🔒 Your personal information is encrypted and secure. We do not store your
-          Aadhaar number or facial data.
-        </div>
-      </div>
+          {/* BACK */}
+          <Button
+            onClick={handleBack}
+            variant="outline"
+            className="mt-4 h-16 w-full rounded-none border-4 border-primary text-primary font-black 
+uppercase 
+    hover:bg-primary 
+    hover:text-white
+  "
+          >
+            Back
+          </Button>
 
-      <p className="sr-only">
-        {step === "aadhaar" && "Enter your 12-digit Aadhaar number"}
-        {step === "otp" && "Enter the 6-digit OTP"}
-        {step === "face" && "Face verification in progress"}
-      </p>
+
+          <div className="mt-6 border-t border-slate-200 pt-4 text-center text-sm font-medium text-slate-500">
+            🔒 Your information is encrypted. We do not store Aadhaar or facial data.
+          </div>
+
+        </section>
+      </main>
     </div>
   )
 }

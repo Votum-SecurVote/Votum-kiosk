@@ -24,24 +24,28 @@ export function WelcomeScreen({ onLanguageSelect }: WelcomeScreenProps) {
   return (
     <div className="flex h-screen flex-col bg-white text-slate-900 font-sans">
 
-      {/* 1. Header Area: Branding & Authority */}
-      <header className="flex items-center justify-between border-b-4 border-primary px-10 py-8">
+      <header className="flex items-center justify-between border-b-4 border-primary px-10 py-6">
         <div className="flex items-center gap-6">
-          <div className="flex h-16 w-16 items-center justify-center bg-primary text-white">
-            <span className="text-3xl">🏛️</span>
+          <div className="flex h-14 w-14 items-center justify-center bg-primary text-white">
+            <span className="text-2xl">🏛️</span>
           </div>
           <div>
-            <h1 className="text-3xl font-black uppercase tracking-tighter italic">
+            <h1 className="text-2xl font-black uppercase tracking-tight italic">
               <span className="text-primary">VOTUM</span>
             </h1>
-            <p className="text-sm font-bold text-slate-400">Kiosk Voting Platform</p>
+            <p className="text-xs font-bold text-slate-400">
+              Kiosk Voting Platform
+            </p>
           </div>
         </div>
-        <div className="hidden md:block">
-          <div className="text-right">
-            <p className="text-xs font-bold uppercase text-slate-400">Session Security</p>
-            <p className="font-mono text-sm font-bold">AES-256 ENCRYPTED</p>
-          </div>
+
+        <div className="text-right">
+          <p className="text-xs font-bold uppercase text-slate-400">
+            Session Security
+          </p>
+          <p className="font-mono text-xs font-bold">
+            AES-256 ENCRYPTED
+          </p>
         </div>
       </header>
 
