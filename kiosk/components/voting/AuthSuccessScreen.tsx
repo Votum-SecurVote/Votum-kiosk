@@ -3,6 +3,7 @@
 import { useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { useVotingContext } from "@/components/voting/VotingContext"
+import { Check } from "lucide-react"
 
 export function AuthSuccessScreen() {
   const { setScreen } = useVotingContext()
@@ -15,51 +16,70 @@ export function AuthSuccessScreen() {
   }, [setScreen])
 
   return (
-    <div className="kiosk-locked flex h-screen flex-col items-center justify-center bg-gradient-to-b from-accent/5 to-background px-6 py-8 animate-fade-in">
-      <div className="flex flex-col items-center gap-8">
-        {/* Check Mark Animation */}
-        <div className="flex h-32 w-32 items-center justify-center rounded-full bg-accent">
-          <svg
-            className="h-24 w-24 animate-check"
-            fill="none"
-            stroke="white"
-            viewBox="0 0 24 24"
-            strokeWidth={2}
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M5 13l4 4L19 7"
-              style={{
-                strokeDasharray: 60,
-                strokeDashoffset: 0,
-              }}
-            />
-          </svg>
+    <div className="flex h-screen flex-col bg-white text-slate-900 font-sans overflow-hidden">
+
+      {/* HEADER — SAME AS OTHER SCREENS */}
+      <header className="flex items-center justify-between border-b-4 border-primary px-10 py-6">
+        <div className="flex items-center gap-6">
+          <div className="flex h-14 w-14 items-center justify-center bg-primary text-white">
+            <span className="text-2xl">🏛️</span>
+          </div>
+          <div>
+            <h1 className="text-2xl font-black uppercase tracking-tight italic">
+              <span className="text-primary">VOTUM</span>
+            </h1>
+            <p className="text-xs font-bold text-slate-400">
+              Kiosk Voting Platform
+            </p>
+          </div>
         </div>
 
-        {/* Success Message */}
-        <h1 className="animate-slide-up text-center text-4xl font-bold text-accent md:text-5xl">
-          Identity Verified
-        </h1>
-
-        <p className="max-w-2xl animate-slide-up text-center text-lg text-muted-foreground md:text-xl">
-          Your identity has been successfully verified. You are now ready to proceed with your vote.
-        </p>
-
-        {/* Auto-proceed message */}
-        <div className="rounded-lg bg-accent/10 p-6 text-center text-base font-medium text-accent-foreground">
-          Redirecting to ballot in 3 seconds...
+        <div className="text-right">
+          <p className="text-xs font-bold uppercase text-slate-400">
+            Session Security
+          </p>
+          <p className="font-mono text-xs font-bold">
+            AES-256 ENCRYPTED
+          </p>
         </div>
+      </header>
 
-        {/* Manual proceed button */}
-        <Button
-          onClick={() => setScreen("ballot")}
-          className="touch-button h-14 bg-primary px-8 text-lg font-semibold text-white hover:bg-primary/90 md:px-12"
-        >
-          Proceed to Ballot
-        </Button>
-      </div>
+      {/* MAIN CONTENT */}
+      <main className="flex flex-1 items-center justify-center px-6">
+        <section className="w-full max-w-2xl text-center">
+
+          {/* CHECK ICON */}
+          <div className="mx-auto mb-8 flex h-28 w-28 items-center justify-center border-4 border-primary">
+            <Check className="h-20 w-20 text-primary stroke-[3]" />
+          </div>
+
+          {/* TITLE */}
+          <h2 className="mb-4 text-3xl font-black uppercase tracking-tight text-primary">
+            Identity Verified
+          </h2>
+
+          {/* DESCRIPTION */}
+          <p className="mb-10 text-lg font-medium text-slate-600">
+            Your identity has been successfully verified.
+            <br />
+            You are authorized to proceed with voting.
+          </p>
+
+          {/* AUTO REDIRECT INFO */}
+          <div className="mb-8 border-2 border-slate-200 bg-slate-50 px-6 py-4 text-sm font-bold uppercase text-slate-600">
+            Redirecting to ballot in 3 seconds…
+          </div>
+
+          {/* MANUAL BUTTON */}
+          <Button
+            onClick={() => setScreen("ballot")}
+            className="h-20 w-full rounded-none bg-slate-900 text-xl font-black uppercase tracking-widest text-white hover:bg-slate-800">
+            Proceed to Ballot
+          </Button>
+
+
+        </section>
+      </main>
 
       <p className="sr-only">
         Identity verification successful. Proceeding to ballot selection.
