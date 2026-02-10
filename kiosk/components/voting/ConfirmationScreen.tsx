@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { useVotingContext } from "@/components/voting/VotingContext"
+import { AlertTriangle, Lock, ArrowLeft, CheckCircle2, Vote } from "lucide-react"
 
 export function ConfirmationScreen() {
   const { selectedCandidate, setScreen } = useVotingContext()
@@ -18,10 +19,11 @@ export function ConfirmationScreen() {
 
   const handleVerifyPassword = () => {
     if (!reAuthPassword) {
-      setError("Please enter a password to confirm")
+      setError("PASSWORD REQUIRED")
       return
     }
     setLoading(true)
+    // Simulate API call
     setTimeout(() => {
       setLoading(false)
       setScreen("submitted")
@@ -38,148 +40,193 @@ export function ConfirmationScreen() {
     }
   }
 
-  if (!selectedCandidate) {
-    return null
-  }
+  if (!selectedCandidate) return null
 
   return (
-    <div className="kiosk-locked flex h-screen flex-col items-center justify-center bg-background px-6 py-8 animate-fade-in">
-      <div className="w-full max-w-2xl">
-        {/* Header */}
-        <h1 className="mb-8 text-center text-4xl font-bold text-primary md:text-5xl">
-          Confirm Your Vote
-        </h1>
+    <div className="flex h-screen flex-col bg-white text-slate-900 font-sans overflow-hidden">
 
-        {step === "confirm" && (
-          <div className="space-y-6 animate-slide-up">
-            {/* Selected Candidate Display */}
-            <div className="rounded-xl border-4 border-primary bg-primary/5 p-8">
+      {/* --- HEADER --- */}
+      <header className="flex shrink-0 items-center justify-between border-b-4 border-primary px-8 py-5">
+        <div className="flex items-center gap-6">
+          <div className="flex h-14 w-14 items-center justify-center bg-primary text-white">
+            <span className="text-2xl">🏛️</span>
+          </div>
+          <div>
+            <h1 className="text-2xl font-black uppercase tracking-tight italic">
+              <span className="text-primary">VOTUM</span>
+            </h1>
+            <p className="text-xs font-bold text-slate-400">
+              Kiosk Voting Platform
+            </p>
+          </div>
+        </div>
+        <div className="text-right">
+          <p className="text-xs font-bold uppercase text-slate-400">
+            Session Security
+          </p>
+          <p className="font-mono text-xs font-bold">
+            AES-256 ENCRYPTED
+          </p>
+        </div>
+      </header>
+
+      {/* --- MAIN CONTENT --- */}
+      <main className="flex flex-1 items-center justify-center bg-slate-50 p-6">
+        <div className="w-full max-w-2xl bg-white p-8 shadow-xl border-4 border-slate-200">
+
+          {/* STEP 1: REVIEW SELECTION */}
+          {step === "confirm" && (
+            <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+
               <div className="text-center">
-                <div className="mb-6 flex h-24 w-24 items-center justify-center rounded-lg bg-primary/10 text-6xl mx-auto">
-                  {selectedCandidate.symbol}
-                </div>
-                <h2 className="mb-2 text-3xl font-bold text-primary">
-                  {selectedCandidate.name}
+                <h2 className="text-3xl font-black uppercase tracking-tighter text-slate-900">
+                  Confirm Selection
                 </h2>
-                <p className="text-xl text-muted-foreground">
-                  {selectedCandidate.party}
+                <p className="font-bold text-slate-400 uppercase tracking-widest text-sm mt-2">
+                  Step 1 of 2
                 </p>
               </div>
-            </div>
 
-            {/* Warning Message */}
-            <div className="rounded-lg border-2 border-destructive bg-destructive/5 p-6">
-              <p className="text-center text-lg font-bold text-destructive">
-                ⚠️ Important Warning
-              </p>
-              <p className="mt-3 text-center text-base text-foreground">
-                You cannot change your vote after confirmation. Please ensure
-                you have selected the correct candidate before proceeding.
-              </p>
-            </div>
+              {/* CANDIDATE TICKET */}
+              <div className="relative border-4 border-slate-900 bg-slate-900 p-1">
+                <div className="flex flex-col items-center bg-white p-8 text-center border-2 border-white border-dashed">
 
-            {/* Confirmation Message */}
-            <div className="rounded-lg bg-accent/10 p-6 text-center">
-              <p className="text-base text-accent-foreground">
-                ✓ You are about to cast your vote for{" "}
-                <span className="font-bold">{selectedCandidate.name}</span>
-              </p>
-            </div>
+                  <div className="mb-4 flex h-24 w-24 items-center justify-center rounded-full bg-primary/10 text-6xl border-4 border-primary/20">
+                    {selectedCandidate.symbol}
+                  </div>
 
-            {/* Action Buttons */}
-            <div className="flex gap-4">
-              <Button
-                onClick={handleBack}
-                variant="outline"
-                className="touch-button flex-1 h-14 text-base font-semibold bg-transparent"
-              >
-                Go Back
-              </Button>
-              <Button
-                onClick={handleProceedToAuth}
-                className="touch-button flex-1 h-14 bg-primary text-base font-semibold text-white hover:bg-primary/90"
-              >
-                Proceed
-              </Button>
-            </div>
-          </div>
-        )}
+                  <h3 className="text-4xl font-black uppercase tracking-tight text-slate-900">
+                    {selectedCandidate.name}
+                  </h3>
 
-        {step === "auth" && (
-          <div className="space-y-6 animate-slide-up">
-            {/* Re-authentication */}
-            <div className="rounded-lg bg-primary/5 p-6 text-center">
-              <p className="mb-6 text-lg text-foreground">
-                Please re-authenticate to confirm your vote
-              </p>
-
-              <div>
-                <label className="mb-3 block text-left text-lg font-semibold text-foreground">
-                  Password
-                </label>
-                <input
-                  type="password"
-                  placeholder="Enter your password"
-                  value={reAuthPassword}
-                  onChange={(e) => {
-                    setReAuthPassword(e.target.value)
-                    setError("")
-                  }}
-                  className="touch-button w-full rounded-lg border-2 border-primary bg-input px-4 py-4 text-lg text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-                  aria-label="Enter password for confirmation"
-                />
+                  <div className="mt-2 inline-block bg-slate-100 px-3 py-1 text-sm font-bold uppercase tracking-wider text-slate-500">
+                    {selectedCandidate.party}
+                  </div>
+                </div>
               </div>
 
-              {error && (
-                <p className="mt-3 rounded-lg bg-destructive/10 p-3 text-base text-destructive">
-                  ⚠️ {error}
+              {/* WARNING BOX */}
+              <div className="flex gap-4 border-l-8 border-amber-400 bg-amber-50 p-5">
+                <AlertTriangle className="h-8 w-8 shrink-0 text-amber-600" />
+                <div>
+                  <h4 className="font-black uppercase text-amber-700">Irreversible Action</h4>
+                  <p className="text-sm font-medium text-amber-800/80 leading-relaxed">
+                    Once you proceed to the next step, your choice is locked.
+                    Please verify that this is the candidate you intend to support.
+                  </p>
+                </div>
+              </div>
+
+              {/* ACTIONS */}
+              <div className="grid grid-cols-2 gap-4 pt-4">
+                <Button
+                  onClick={handleBack}
+                  variant="outline"
+                  className="h-16 rounded-none border-4 border-slate-200 text-lg font-bold uppercase text-slate-500 hover:bg-slate-50 hover:text-slate-700"
+                >
+                  <ArrowLeft className="mr-2 h-5 w-5" />
+                  Return
+                </Button>
+                <Button
+                  onClick={handleProceedToAuth}
+                  className="h-16 rounded-none bg-primary text-lg font-black uppercase tracking-wider text-white hover:bg-primary/90"
+                >
+                  Confirm & Verify
+                </Button>
+              </div>
+            </div>
+          )}
+
+          {/* STEP 2: AUTHENTICATION */}
+          {step === "auth" && (
+            <div className="space-y-8 animate-in fade-in slide-in-from-right-8 duration-300">
+
+              <div className="text-center">
+                <h2 className="text-3xl font-black uppercase tracking-tighter text-slate-900">
+                  Final Verification
+                </h2>
+                <p className="font-bold text-slate-400 uppercase tracking-widest text-sm mt-2">
+                  Step 2 of 2
                 </p>
-              )}
-            </div>
+              </div>
 
-            {/* Final Vote Summary */}
-            <div className="rounded-xl border-4 border-primary bg-primary/5 p-6 text-center">
-              <p className="text-lg text-muted-foreground">
-                You are voting for:
-              </p>
-              <h3 className="mt-2 text-2xl font-bold text-primary">
-                {selectedCandidate.name}
-              </h3>
-            </div>
+              <div className="bg-slate-100 p-6 border-2 border-slate-200">
+                <div className="flex items-center justify-between mb-6 pb-6 border-b-2 border-slate-200">
+                  <span className="text-sm font-bold uppercase text-slate-500">Casting vote for:</span>
+                  <span className="text-xl font-black uppercase text-slate-900">{selectedCandidate.name}</span>
+                </div>
 
-            {/* Final Warning */}
-            <div className="rounded-lg border-2 border-destructive bg-destructive/5 p-4 text-center">
-              <p className="font-bold text-destructive">
-                Your vote cannot be changed after submission.
-              </p>
-            </div>
+                <div className="space-y-4">
+                  <label className="flex items-center gap-2 text-sm font-bold uppercase text-slate-700">
+                    <Lock className="h-4 w-4" />
+                    Enter Security Password
+                  </label>
 
-            {/* Action Buttons */}
-            <div className="flex gap-4">
-              <Button
-                onClick={handleBack}
-                variant="outline"
-                className="touch-button flex-1 h-14 text-base font-semibold bg-transparent"
-                disabled={loading}
-              >
-                Back
-              </Button>
-              <Button
-                onClick={handleVerifyPassword}
-                disabled={loading || !reAuthPassword}
-                className="touch-button flex-1 h-14 bg-destructive text-base font-semibold text-white hover:bg-destructive/90 disabled:opacity-50"
-              >
-                {loading ? "Submitting..." : "Cast Vote"}
-              </Button>
-            </div>
-          </div>
-        )}
-      </div>
+                  <input
+                    type="password"
+                    autoFocus
+                    placeholder="••••••••"
+                    value={reAuthPassword}
+                    onChange={(e) => {
+                      setReAuthPassword(e.target.value)
+                      setError("")
+                    }}
+                    className="h-16 w-full rounded-none border-4 border-slate-300 bg-white px-4 text-center text-3xl font-black tracking-widest text-slate-900 placeholder:text-slate-200 focus:border-primary focus:outline-none"
+                  />
 
-      <p className="sr-only">
-        Confirmation screen. Review your selected candidate: {selectedCandidate.name}. Your vote cannot be changed
-        after submission.
-      </p>
+                  {error && (
+                    <div className="flex items-center justify-center gap-2 text-sm font-bold uppercase text-red-600 animate-pulse">
+                      <AlertTriangle className="h-4 w-4" />
+                      {error}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* FINAL ACTIONS */}
+              <div className="grid grid-cols-2 gap-4">
+                <Button
+                  onClick={handleBack}
+                  disabled={loading}
+                  variant="outline"
+                  className="h-16 rounded-none border-4 border-slate-200 text-lg font-bold uppercase text-slate-500 hover:bg-slate-50 hover:text-slate-700"
+                >
+                  <ArrowLeft className="mr-2 h-5 w-5" />
+                  Back
+                </Button>
+
+                <Button
+                  onClick={handleVerifyPassword}
+                  disabled={loading || !reAuthPassword}
+                  className={`h-16 rounded-none text-lg font-black uppercase tracking-widest text-white transition-all
+                    ${loading ? "bg-slate-800" : "bg-red-600 hover:bg-red-700"}
+                  `}
+                >
+                  {loading ? (
+                    <span className="flex items-center gap-2">
+                      Processing...
+                    </span>
+                  ) : (
+                    <span className="flex items-center gap-2">
+                      <Vote className="h-5 w-5" />
+                      Cast Final Vote
+                    </span>
+                  )}
+                </Button>
+              </div>
+
+            </div>
+          )}
+
+        </div>
+      </main>
+
+      {/* FOOTER */}
+      <footer className="border-t-4 border-slate-200 bg-white py-4 text-center">
+        <p className="text-[10px] font-bold uppercase text-slate-300">
+          Official Ballot System v2.4 • Unauthorized access is a felony
+        </p>
+      </footer>
     </div>
   )
 }
