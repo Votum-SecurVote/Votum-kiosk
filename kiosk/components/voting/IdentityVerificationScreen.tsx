@@ -8,7 +8,11 @@ import { ChevronRight } from "lucide-react"
 export function IdentityVerificationScreen() {
   const { setScreen, setVerified } = useVotingContext()
 
+  // --- NEW STATE FOR EMAIL & PASSWORD ---
   const [aadhaar, setAadhaar] = useState("")
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+
   const [otp, setOtp] = useState("")
   const [step, setStep] = useState<"aadhaar" | "otp" | "face">("aadhaar")
   const [loading, setLoading] = useState(false)
@@ -21,10 +25,24 @@ export function IdentityVerificationScreen() {
   }
 
   const handleSendOtp = () => {
+    // 1. Validate Aadhaar
     if (aadhaar.replace(/\s/g, "").length !== 12) {
       setError("ENTER VALID 12-DIGIT AADHAAR")
       return
     }
+
+    // 2. Validate Email (Simple check)
+    if (!email.includes("@") || !email.includes(".")) {
+      setError("ENTER VALID EMAIL ADDRESS")
+      return
+    }
+
+    // 3. Validate Password (Min length check)
+    if (password.length < 6) {
+      setError("PASSWORD MUST BE AT LEAST 6 CHARACTERS")
+      return
+    }
+
     setLoading(true)
     setTimeout(() => {
       setLoading(false)
@@ -132,8 +150,8 @@ export function IdentityVerificationScreen() {
       </header>
 
       {/* MAIN */}
-      <main className="flex flex-1 items-center justify-center px-6">
-        <section className="w-full max-w-2xl">
+      <main className="flex flex-1 items-center justify-center px-6 overflow-y-auto">
+        <section className="w-full max-w-2xl py-10">
 
           {/* TITLE */}
           <div className="mb-6">
@@ -145,23 +163,51 @@ export function IdentityVerificationScreen() {
             </p>
           </div>
 
-          {/* STEP 1 */}
+          {/* STEP 1: AADHAAR, EMAIL, PASSWORD */}
           {step === "aadhaar" && (
-            <div className="space-y-6">
-              <input
-                type="text"
-                placeholder="0000 0000 0000"
-                value={aadhaar}
-                onChange={(e) => setAadhaar(formatAadhaar(e.target.value))}
-                className="h-20 w-full border-4 border-slate-200 px-6 text-2xl font-black tracking-widest focus:border-primary focus:outline-none"
-              />
+            <div className="space-y-4">
+              {/* Aadhaar Input */}
+              <div>
+                <label className="mb-1 block text-sm font-bold uppercase text-slate-500">Aadhaar Number</label>
+                <input
+                  type="text"
+                  placeholder="0000 0000 0000"
+                  value={aadhaar}
+                  onChange={(e) => setAadhaar(formatAadhaar(e.target.value))}
+                  className="h-16 w-full border-4 border-slate-200 px-4 text-xl font-black tracking-widest focus:border-primary focus:outline-none"
+                />
+              </div>
 
-              {error && <p className="text-red-600 font-bold uppercase">{error}</p>}
+              {/* Email Input */}
+              <div>
+                <label className="mb-1 block text-sm font-bold uppercase text-slate-500">Email Address</label>
+                <input
+                  type="email"
+                  placeholder="VOTER@EXAMPLE.COM"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="h-16 w-full border-4 border-slate-200 px-4 text-xl font-bold uppercase tracking-wide focus:border-primary focus:outline-none"
+                />
+              </div>
+
+              {/* Password Input */}
+              <div>
+                <label className="mb-1 block text-sm font-bold uppercase text-slate-500">Password</label>
+                <input
+                  type="password"
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="h-16 w-full border-4 border-slate-200 px-4 text-xl font-black tracking-widest focus:border-primary focus:outline-none"
+                />
+              </div>
+
+              {error && <p className="text-red-600 font-bold uppercase pt-2">{error}</p>}
 
               <Button
                 onClick={handleSendOtp}
                 disabled={loading}
-                className="h-20 w-full rounded-none bg-slate-900 text-2xl font-black uppercase tracking-widest text-white hover:bg-slate-800"
+                className="mt-2 h-20 w-full rounded-none bg-slate-900 text-2xl font-black uppercase tracking-widest text-white hover:bg-slate-800"
               >
                 {loading ? "Sending..." : "Send OTP"}
                 <ChevronRight className="ml-4 h-8 w-8" />
@@ -169,7 +215,7 @@ export function IdentityVerificationScreen() {
             </div>
           )}
 
-          {/* STEP 2 */}
+          {/* STEP 2: OTP */}
           {step === "otp" && (
             <div className="space-y-6">
               <input
@@ -195,11 +241,9 @@ export function IdentityVerificationScreen() {
             </div>
           )}
 
-          {/* FACE STEP */}
+          {/* STEP 3: FACE */}
           {step === "face" && (
             <div className="space-y-4">
-
-              {/* Smaller Camera Frame */}
               <div className="flex justify-center">
                 <video
                   ref={videoRef}
@@ -233,19 +277,14 @@ export function IdentityVerificationScreen() {
             </div>
           )}
 
-          {/* BACK */}
+          {/* BACK BUTTON */}
           <Button
             onClick={handleBack}
             variant="outline"
-            className="mt-4 h-16 w-full rounded-none border-4 border-primary text-primary font-black 
-uppercase 
-    hover:bg-primary 
-    hover:text-white
-  "
+            className="mt-6 h-16 w-full rounded-none border-4 border-primary text-primary font-black uppercase hover:bg-primary hover:text-white"
           >
             Back
           </Button>
-
 
           <div className="mt-6 border-t border-slate-200 pt-4 text-center text-sm font-medium text-slate-500">
             🔒 Your information is encrypted. We do not store Aadhaar or facial data.
