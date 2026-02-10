@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { useVotingContext } from "@/components/voting/VotingContext"
 import { AlertTriangle, Lock, ArrowLeft, CheckCircle2, Vote } from "lucide-react"
@@ -40,6 +40,28 @@ export function ConfirmationScreen() {
     }
   }
 
+  function CurrentTime() {
+    const [time, setTime] = useState(new Date())
+
+    useEffect(() => {
+      const interval = setInterval(() => {
+        setTime(new Date())
+      }, 1000)
+
+      return () => clearInterval(interval)
+    }, [])
+
+    return (
+      <p className="font-mono text-xl font-black tracking-widest text-slate-900">
+        {time.toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+        })}
+      </p>
+    )
+  }
+
   if (!selectedCandidate) return null
 
   return (
@@ -61,12 +83,7 @@ export function ConfirmationScreen() {
           </div>
         </div>
         <div className="text-right">
-          <p className="text-xs font-bold uppercase text-slate-400">
-            Session Security
-          </p>
-          <p className="font-mono text-xs font-bold">
-            AES-256 ENCRYPTED
-          </p>
+          <CurrentTime />
         </div>
       </header>
 

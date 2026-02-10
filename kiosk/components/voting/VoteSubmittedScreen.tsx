@@ -36,6 +36,28 @@ export function VoteSubmittedScreen() {
     window.print()
   }
 
+  function CurrentTime() {
+    const [time, setTime] = useState(new Date())
+
+    useEffect(() => {
+      const interval = setInterval(() => {
+        setTime(new Date())
+      }, 1000)
+
+      return () => clearInterval(interval)
+    }, [])
+
+    return (
+      <p className="font-mono text-xl font-black tracking-widest text-slate-900">
+        {time.toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+        })}
+      </p>
+    )
+  }
+
   return (
     <div className="flex h-screen flex-col bg-white text-slate-900 font-sans overflow-hidden">
 
@@ -55,12 +77,7 @@ export function VoteSubmittedScreen() {
           </div>
         </div>
         <div className="text-right">
-          <p className="text-xs font-bold uppercase text-slate-400">
-            Session Security
-          </p>
-          <p className="font-mono text-xs font-bold">
-            AES-256 ENCRYPTED
-          </p>
+          <CurrentTime />
         </div>
       </header>
 

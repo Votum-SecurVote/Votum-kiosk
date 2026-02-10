@@ -1,6 +1,6 @@
-'use client';
+'use client'
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { useVotingContext } from "@/components/voting/VotingContext"
 import { ChevronRight, Languages, ShieldCheck, UserCheck, Eye } from "lucide-react"
@@ -17,6 +17,28 @@ const LANGUAGES = [
   { code: 'te', label: 'తెలుగు' },
 ]
 
+function CurrentTime() {
+  const [time, setTime] = useState(new Date())
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setTime(new Date())
+    }, 1000)
+
+    return () => clearInterval(interval)
+  }, [])
+
+  return (
+    <p className="font-mono text-xl font-black tracking-widest text-slate-900">
+      {time.toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+      })}
+    </p>
+  )
+}
+
 export function WelcomeScreen({ onLanguageSelect }: WelcomeScreenProps) {
   const { setScreen } = useVotingContext()
   const [selectedLang, setSelectedLang] = useState('en')
@@ -24,6 +46,7 @@ export function WelcomeScreen({ onLanguageSelect }: WelcomeScreenProps) {
   return (
     <div className="flex h-screen flex-col bg-white text-slate-900 font-sans">
 
+      {/* HEADER */}
       <header className="flex items-center justify-between border-b-4 border-primary px-10 py-6">
         <div className="flex items-center gap-6">
           <div className="flex h-14 w-14 items-center justify-center bg-primary text-white">
@@ -40,25 +63,20 @@ export function WelcomeScreen({ onLanguageSelect }: WelcomeScreenProps) {
         </div>
 
         <div className="text-right">
-          <p className="text-xs font-bold uppercase text-slate-400">
-            Session Security
-          </p>
-          <p className="font-mono text-xs font-bold">
-            AES-256 ENCRYPTED
-          </p>
+          <CurrentTime />
         </div>
       </header>
 
-      {/* 2. Main Content: Split Layout */}
+      {/* MAIN CONTENT */}
       <main className="flex flex-1 overflow-hidden">
-
-        {/* Left Side: Language & Primary Action */}
+        {/* Left */}
         <section className="flex flex-[1.2] flex-col justify-center border-r border-slate-100 px-12 lg:px-20">
           <div className="mb-12 space-y-4">
             <div className="flex items-center gap-2 font-bold text-primary">
               <Languages className="h-6 w-6" />
               <span>STEP 1: CHOOSE LANGUAGE</span>
             </div>
+
             <div className="grid grid-cols-2 gap-4">
               {LANGUAGES.map((lang) => (
                 <button
@@ -82,7 +100,7 @@ export function WelcomeScreen({ onLanguageSelect }: WelcomeScreenProps) {
 
           <Button
             onClick={() => setScreen("identity")}
-            className="group relative h-28 w-full rounded-none bg-slate-900 text-3xl font-black uppercase tracking-widest text-white transition-all hover:bg-slate-800"
+            className="group relative h-28 w-full rounded-none bg-slate-900 text-3xl font-black uppercase tracking-widest text-white hover:bg-slate-800"
           >
             Begin Voting
             <ChevronRight className="ml-4 h-10 w-10 transition-transform group-hover:translate-x-2" />
@@ -90,7 +108,7 @@ export function WelcomeScreen({ onLanguageSelect }: WelcomeScreenProps) {
           </Button>
         </section>
 
-        {/* Right Side: Visual Requirements */}
+        {/* Right */}
         <section className="hidden flex-1 flex-col justify-center bg-slate-50 px-12 lg:flex">
           <h2 className="mb-8 text-xl font-black uppercase tracking-tight text-slate-400">
             Preparation Checklist
@@ -113,31 +131,33 @@ export function WelcomeScreen({ onLanguageSelect }: WelcomeScreenProps) {
               description="Ensure no one else is looking at the screen while you vote."
             />
           </div>
-
-          <div className="mt-12 border-t border-slate-200 pt-8">
-            <div className="flex items-center gap-4 text-slate-400">
-              <div className="h-12 w-12 rounded-full border-2 border-slate-200 flex items-center justify-center font-bold">?</div>
-              <p className="text-sm font-medium">
-                Need assistance? Press the <span className="font-bold text-slate-900">RED HELP BUTTON</span> on the physical kiosk console.
-              </p>
-            </div>
-          </div>
         </section>
       </main>
-
     </div>
   )
 }
 
-function ChecklistBox({ icon, title, description }: { icon: React.ReactNode, title: string, description: string }) {
+function ChecklistBox({
+  icon,
+  title,
+  description,
+}: {
+  icon: React.ReactNode
+  title: string
+  description: string
+}) {
   return (
     <div className="flex gap-6">
-      <div className="flex h-16 w-16 shrink-0 items-center justify-center bg-white shadow-sm border border-slate-200">
+      <div className="flex h-16 w-16 items-center justify-center bg-white border border-slate-200">
         {icon}
       </div>
       <div>
-        <h3 className="text-lg font-black uppercase leading-none text-slate-800 mb-1">{title}</h3>
-        <p className="text-slate-500 font-medium leading-tight max-w-[280px]">{description}</p>
+        <h3 className="text-lg font-black uppercase text-slate-800 mb-1">
+          {title}
+        </h3>
+        <p className="text-slate-500 font-medium max-w-[280px]">
+          {description}
+        </p>
       </div>
     </div>
   )
