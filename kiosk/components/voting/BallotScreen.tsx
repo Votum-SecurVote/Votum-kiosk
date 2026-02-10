@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { useVotingContext } from "@/components/voting/VotingContext"
+import { Check, AlertCircle } from "lucide-react"
 
 interface Candidate {
   id: string
@@ -44,8 +45,7 @@ const CANDIDATES: Candidate[] = [
 ]
 
 export function BallotScreen() {
-  const { setScreen, selectedCandidate, setSelectedCandidate } =
-    useVotingContext()
+  const { setScreen, selectedCandidate, setSelectedCandidate } = useVotingContext()
   const [error, setError] = useState("")
 
   const handleSelectCandidate = (candidate: Candidate) => {
@@ -55,113 +55,157 @@ export function BallotScreen() {
 
   const handleConfirm = () => {
     if (!selectedCandidate) {
-      setError("Please select a candidate to continue")
+      setError("You must select a candidate to proceed.")
       return
     }
     setScreen("confirmation")
   }
 
   return (
-    <div className="kiosk-locked flex h-screen flex-col bg-background px-6 py-8 animate-fade-in">
-      {/* Header */}
-      <div className="mb-8 text-center">
-        <h1 className="mb-2 text-3xl font-bold text-primary md:text-4xl">
-          National Elections 2026
-        </h1>
-        <p className="text-lg text-muted-foreground">
-          Select your preferred candidate
-        </p>
-      </div>
+    <div className="flex h-screen flex-col bg-white text-slate-900 font-sans overflow-hidden">
 
-      {/* Instructions */}
-      <div className="mb-8 rounded-lg bg-primary/5 p-4 text-center text-base text-foreground">
-        Tap on a candidate card to select them, then confirm your choice
-      </div>
+      {/* --- HEADER (MATCHING PREVIOUS SCREEN) --- */}
+      <header className="flex shrink-0 items-center justify-between border-b-4 border-primary px-8 py-5">
+        <div className="flex items-center gap-6">
+          <div className="flex h-14 w-14 items-center justify-center bg-primary text-white">
+            <span className="text-2xl">🏛️</span>
+          </div>
+          <div>
+            <h1 className="text-2xl font-black uppercase tracking-tight italic">
+              <span className="text-primary">VOTUM</span>
+            </h1>
+            <p className="text-xs font-bold text-slate-400">
+              Kiosk Voting Platform
+            </p>
+          </div>
+        </div>
 
-      {/* Candidates Grid */}
-      <div className="flex-1 overflow-y-auto">
-        <div className="grid gap-6 md:grid-cols-2">
-          {CANDIDATES.map((candidate) => (
-            <button
-              key={candidate.id}
-              onClick={() => handleSelectCandidate(candidate)}
-              className={`touch-button group relative flex flex-col gap-4 rounded-xl border-4 p-6 transition-all duration-300 ${
-                selectedCandidate?.id === candidate.id
-                  ? "border-primary bg-primary/10"
-                  : "border-border bg-card hover:border-primary/50 hover:bg-muted/30"
-              }`}
-              aria-pressed={selectedCandidate?.id === candidate.id}
-              aria-label={`Select ${candidate.name} from ${candidate.party}`}
-            >
-              {/* Selection indicator */}
-              <div className="absolute right-4 top-4">
-                <div
-                  className={`h-8 w-8 rounded-full border-3 flex items-center justify-center transition-all ${
-                    selectedCandidate?.id === candidate.id
-                      ? "border-primary bg-primary"
-                      : "border-border"
-                  }`}
+        <div className="text-right">
+          <p className="text-xs font-bold uppercase text-slate-400">
+            Session Security
+          </p>
+          <p className="font-mono text-xs font-bold">
+            AES-256 ENCRYPTED
+          </p>
+        </div>
+      </header>
+
+      {/* --- MAIN SCROLLABLE CONTENT --- */}
+      <main className="flex flex-1 flex-col overflow-hidden">
+
+        {/* SUB-HEADER / INSTRUCTIONS */}
+        <div className="shrink-0 bg-slate-50 px-8 py-6 border-b-2 border-slate-200">
+          <div className="flex items-start justify-between">
+            <div>
+              <h2 className="text-3xl font-black uppercase tracking-tight text-slate-900">
+                Official Ballot
+              </h2>
+              <p className="font-medium text-slate-500">
+                National Elections 2026
+              </p>
+            </div>
+            <div className="max-w-md text-right hidden md:block">
+              <p className="text-sm font-bold uppercase text-primary">Instructions</p>
+              <p className="text-sm text-slate-600">
+                Tap a candidate card below to select your choice.
+                Press "Confirm Vote" at the bottom when ready.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* CANDIDATES GRID (SCROLLABLE) */}
+        <div className="flex-1 overflow-y-auto p-8 bg-slate-100/50">
+          <div className="grid gap-6 md:grid-cols-2 lg:gap-8">
+            {CANDIDATES.map((candidate) => {
+              const isSelected = selectedCandidate?.id === candidate.id
+
+              return (
+                <button
+                  key={candidate.id}
+                  onClick={() => handleSelectCandidate(candidate)}
+                  className={`group relative flex items-center gap-6 border-4 p-6 text-left transition-all duration-200 ease-in-out
+                    ${isSelected
+                      ? "border-primary bg-white shadow-xl ring-2 ring-primary/20 scale-[1.01]"
+                      : "border-slate-200 bg-white hover:border-slate-400 hover:shadow-md"
+                    }
+                  `}
+                  aria-pressed={isSelected}
+                  aria-label={`Vote for ${candidate.name}`}
                 >
-                  {selectedCandidate?.id === candidate.id && (
-                    <span className="text-xl text-white">✓</span>
-                  )}
-                </div>
-              </div>
+                  {/* CHECKMARK INDICATOR (TOP RIGHT) */}
+                  <div className={`absolute right-0 top-0 flex h-10 w-10 items-center justify-center border-b-4 border-l-4 transition-colors
+                    ${isSelected
+                      ? "border-primary bg-primary text-white"
+                      : "border-slate-100 bg-slate-100 text-slate-300"
+                    }`}>
+                    <Check className="h-6 w-6 stroke-[4]" />
+                  </div>
 
-              {/* Party Symbol */}
-              <div className="flex h-20 w-20 items-center justify-center rounded-lg bg-primary/10 text-5xl">
-                {candidate.symbol}
-              </div>
+                  {/* SYMBOL BOX */}
+                  <div className={`flex h-24 w-24 shrink-0 items-center justify-center border-2 text-5xl
+                     ${isSelected ? "border-primary bg-primary/5" : "border-slate-200 bg-slate-50"}
+                  `}>
+                    {candidate.symbol}
+                  </div>
 
-              {/* Candidate Info */}
-              <div className="flex-1 text-left">
-                <h3 className="mb-1 text-2xl font-bold text-primary">
-                  {candidate.name}
-                </h3>
-                <p className="text-lg text-muted-foreground">
-                  {candidate.party}
-                </p>
-              </div>
-
-              {/* Selection state indicator */}
-              {selectedCandidate?.id === candidate.id && (
-                <div className="rounded-lg bg-accent/10 py-2 text-center text-base font-semibold text-accent">
-                  ✓ Selected
-                </div>
-              )}
-            </button>
-          ))}
+                  {/* INFO */}
+                  <div className="flex flex-col">
+                    <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
+                      {candidate.party}
+                    </span>
+                    <span className="text-2xl font-black uppercase leading-tight text-slate-900 group-hover:text-primary transition-colors">
+                      {candidate.name}
+                    </span>
+                    {isSelected && (
+                      <span className="mt-2 inline-block w-fit bg-primary px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest text-white">
+                        Selected
+                      </span>
+                    )}
+                  </div>
+                </button>
+              )
+            })}
+          </div>
         </div>
-      </div>
+      </main>
 
-      {/* Error Message */}
-      {error && (
-        <div className="my-6 rounded-lg bg-destructive/10 p-4 text-center text-base font-semibold text-destructive">
-          ⚠️ {error}
+      {/* --- FOOTER / ACTIONS --- */}
+      <footer className="shrink-0 border-t-4 border-slate-200 bg-white px-8 py-6">
+
+        {/* ERROR MESSAGE AREA */}
+        {error && (
+          <div className="mb-4 flex items-center gap-3 border-l-4 border-red-600 bg-red-50 p-4">
+            <AlertCircle className="h-6 w-6 text-red-600" />
+            <p className="font-bold text-red-900 uppercase tracking-tight">{error}</p>
+          </div>
+        )}
+
+        <div className="flex gap-4">
+          <Button
+            onClick={() => setScreen("welcome")}
+            variant="ghost"
+            className="h-20 flex-1 rounded-none border-4 border-slate-200 bg-transparent text-xl font-bold uppercase text-slate-400 hover:border-slate-300 hover:bg-slate-50 hover:text-slate-600"
+          >
+            Cancel
+          </Button>
+
+          <Button
+            onClick={handleConfirm}
+            className={`h-20 flex-[3] rounded-none text-xl font-black uppercase tracking-widest transition-all
+              ${selectedCandidate
+                ? "bg-slate-900 text-white hover:bg-primary"
+                : "bg-slate-200 text-slate-400 cursor-not-allowed hover:bg-slate-200"
+              }
+            `}
+          >
+            {selectedCandidate ? "Confirm Vote" : "Select a Candidate"}
+          </Button>
         </div>
-      )}
-
-      {/* Action Buttons */}
-      <div className="mt-8 flex gap-4">
-        <Button
-          onClick={() => setScreen("welcome")}
-          variant="outline"
-          className="touch-button flex-1 h-14 text-base font-semibold"
-        >
-          Exit
-        </Button>
-        <Button
-          onClick={handleConfirm}
-          disabled={!selectedCandidate}
-          className="touch-button flex-1 h-14 bg-primary text-base font-semibold text-white hover:bg-primary/90 disabled:opacity-50"
-        >
-          Confirm Selection
-        </Button>
-      </div>
+      </footer>
 
       <p className="sr-only">
-        Ballot screen. {CANDIDATES.length} candidates available. Select a
-        candidate and confirm your choice.
+        Ballot screen. {CANDIDATES.length} candidates available. Select a candidate and confirm.
       </p>
     </div>
   )
