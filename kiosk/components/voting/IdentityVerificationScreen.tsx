@@ -1,5 +1,7 @@
 "use client"
 
+import { kioskLogin } from "@/services/kioskApi"
+
 import React, { useState, useRef, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { useVotingContext } from "@/components/voting/VotingContext"
@@ -19,37 +21,50 @@ export function IdentityVerificationScreen() {
   const [error, setError] = useState("")
   const videoRef = useRef<HTMLVideoElement>(null)
 
+
   const formatAadhaar = (value: string) => {
     const digits = value.replace(/\D/g, "").slice(0, 12)
     return digits.replace(/(\d{4})(?=\d)/g, "$1 ")
   }
 
-  const handleSendOtp = () => {
-    // 1. Validate Aadhaar
+  const handleSendOtp = async () => {
     if (aadhaar.replace(/\s/g, "").length !== 12) {
       setError("ENTER VALID 12-DIGIT AADHAAR")
       return
     }
 
-    // 2. Validate Email (Simple check)
     if (!email.includes("@") || !email.includes(".")) {
       setError("ENTER VALID EMAIL ADDRESS")
       return
     }
 
-    // 3. Validate Password (Min length check)
     if (password.length < 6) {
       setError("PASSWORD MUST BE AT LEAST 6 CHARACTERS")
       return
     }
 
-    setLoading(true)
-    setTimeout(() => {
-      setLoading(false)
+    try {
+      setLoading(true)
       setError("")
+
+      const token = await kioskLogin({
+        email,
+        password,
+        aadhaar: aadhaar.replace(/\s/g, ""),
+      })
+
+      // Store JWT
+      localStorage.setItem("kiosk_token", token)
+
       setStep("otp")
-    }, 1500)
+
+    } catch (err: any) {
+      setError(err.message)
+    } finally {
+      setLoading(false)
+    }
   }
+
 
   const handleVerifyOtp = () => {
     if (otp.length !== 6) {
@@ -90,10 +105,10 @@ export function IdentityVerificationScreen() {
   const handleBack = () => {
     setError("")
     if (step === "otp") {
-      setStep("aadhaar")
+      setScreen("welcome")
       setOtp("")
     } else if (step === "face") {
-      setStep("otp")
+      setScreen("welcome")
       if (videoRef.current?.srcObject) {
         const tracks = (videoRef.current.srcObject as MediaStream).getTracks()
         tracks.forEach((track) => track.stop())
