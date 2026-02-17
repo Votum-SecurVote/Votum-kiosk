@@ -2,6 +2,11 @@ import * as React from 'react'
 
 import { cn } from '@/lib/utils'
 
+/**
+ * Card Component.
+ * Container for related content and actions.
+ * Serves as the main wrapper for the card pattern.
+ */
 function Card({ className, ...props }: React.ComponentProps<'div'>) {
   return (
     <div
@@ -15,6 +20,10 @@ function Card({ className, ...props }: React.ComponentProps<'div'>) {
   )
 }
 
+/**
+ * Card Header Component.
+ * Container for card title and description.
+ */
 function CardHeader({ className, ...props }: React.ComponentProps<'div'>) {
   return (
     <div
@@ -28,6 +37,10 @@ function CardHeader({ className, ...props }: React.ComponentProps<'div'>) {
   )
 }
 
+/**
+ * Card Title Component.
+ * Main heading of the card.
+ */
 function CardTitle({ className, ...props }: React.ComponentProps<'div'>) {
   return (
     <div
@@ -38,6 +51,10 @@ function CardTitle({ className, ...props }: React.ComponentProps<'div'>) {
   )
 }
 
+/**
+ * Card Description Component.
+ * Subtitle or supporting text for the card title.
+ */
 function CardDescription({ className, ...props }: React.ComponentProps<'div'>) {
   return (
     <div
@@ -48,6 +65,10 @@ function CardDescription({ className, ...props }: React.ComponentProps<'div'>) {
   )
 }
 
+/**
+ * Card Action Component.
+ * Container for action items within the card header (custom extension).
+ */
 function CardAction({ className, ...props }: React.ComponentProps<'div'>) {
   return (
     <div
@@ -61,6 +82,10 @@ function CardAction({ className, ...props }: React.ComponentProps<'div'>) {
   )
 }
 
+/**
+ * Card Content Component.
+ * Main content area of the card.
+ */
 function CardContent({ className, ...props }: React.ComponentProps<'div'>) {
   return (
     <div
@@ -71,6 +96,10 @@ function CardContent({ className, ...props }: React.ComponentProps<'div'>) {
   )
 }
 
+/**
+ * Card Footer Component.
+ * Container for footer content, usually actions.
+ */
 function CardFooter({ className, ...props }: React.ComponentProps<'div'>) {
   return (
     <div
