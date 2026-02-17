@@ -5,12 +5,18 @@ import { Button } from "@/components/ui/button"
 import { useVotingContext } from "@/components/voting/VotingContext"
 import { Check, Copy, Printer, FileCheck, ShieldCheck } from "lucide-react"
 
+/**
+ * Vote Submitted Screen.
+ * Displays success message and cryptographic receipt.
+ * Auto-resets the kiosk after a countdown.
+ */
 export function VoteSubmittedScreen() {
   const { reset } = useVotingContext()
   const [receiptHash] = useState("SHA256:a7f2c8e9d1b3f4a6c2e9b1d3f5a7c9e")
   const [copied, setCopied] = useState(false)
   const [timeLeft, setTimeLeft] = useState(30)
 
+  // Auto-reset timer effect
   useEffect(() => {
     const timer = setInterval(() => {
       setTimeLeft((prev) => {

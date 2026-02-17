@@ -6,6 +6,7 @@ import { useVotingContext } from "@/components/voting/VotingContext"
 import { Check, AlertCircle } from "lucide-react"
 import { getActiveElection, getBallots, getCandidates } from "@/services/kioskApi"
 
+// Local Interface for Candidate Display
 interface Candidate {
   id: string
   name: string
@@ -36,6 +37,11 @@ function CurrentTime() {
   )
 }
 
+/**
+ * Ballot Screen Component.
+ * Displays the list of candidates for the active election.
+ * Fetches data from the backend upon mounting.
+ */
 export function BallotScreen() {
   const { setScreen, selectedCandidate, setSelectedCandidate } = useVotingContext()
 
@@ -43,6 +49,7 @@ export function BallotScreen() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
 
+  // Fetch active election and associated ballot/candidates
   useEffect(() => {
     const fetchData = async () => {
       try {

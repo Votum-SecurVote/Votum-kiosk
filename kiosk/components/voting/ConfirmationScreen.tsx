@@ -5,6 +5,12 @@ import { Button } from "@/components/ui/button"
 import { useVotingContext } from "@/components/voting/VotingContext"
 import { AlertTriangle, Lock, ArrowLeft, CheckCircle2, Vote } from "lucide-react"
 
+/**
+ * Confirmation Screen Component.
+ * Two-step verification process:
+ * 1. Visual confirmation of selected candidate.
+ * 2. Final security password entry to cast the vote.
+ */
 export function ConfirmationScreen() {
   const { selectedCandidate, setScreen } = useVotingContext()
   const [reAuthPassword, setReAuthPassword] = useState("")
@@ -12,11 +18,13 @@ export function ConfirmationScreen() {
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
 
+  // Transition to Step 2 (Auth)
   const handleProceedToAuth = () => {
     setStep("auth")
     setError("")
   }
 
+  // Final Vote Submission (Mocked Password Check)
   const handleVerifyPassword = () => {
     if (!reAuthPassword) {
       setError("PASSWORD REQUIRED")
