@@ -1,8 +1,13 @@
+/**
+ * Global Stylesheet.
+ * Includes Tailwind imports and custom theme definitions.
+ */
 @import 'tailwindcss';
 @import 'tw-animate-css';
 
 @custom-variant dark (&:is(.dark *));
 
+/* Default Root (Light Mode) Color Variables */
 :root {
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
@@ -39,6 +44,7 @@
   --sidebar-ring: oklch(0.708 0 0);
 }
 
+/* Dark Mode Color Overrides */
 .dark {
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);

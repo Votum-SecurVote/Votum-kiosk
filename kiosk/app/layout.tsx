@@ -7,6 +7,10 @@ import './globals.css'
 const _geist = Geist({ subsets: ["latin"] });
 const _geistMono = Geist_Mono({ subsets: ["latin"] });
 
+/**
+ * Metadata configuration for the Next.js application.
+ * Defines title, description, and icons for SEO and PWA support.
+ */
 export const metadata: Metadata = {
   title: 'Secure E-Voting Kiosk | National Elections 2026',
   description: 'Secure, accessible, and government-grade digital voting platform with Aadhaar verification and facial recognition.',
@@ -31,6 +35,11 @@ export const metadata: Metadata = {
   },
 }
 
+/**
+ * Root Layout Component.
+ * Wraps the entire application with the HTML/Body structure.
+ * Includes global fonts and analytics.
+ */
 export default function RootLayout({
   children,
 }: Readonly<{

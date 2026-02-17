@@ -1,3 +1,7 @@
+/**
+ * ESLint configuration file.
+ * Extends Next.js core web vitals and typescript configurations.
+ */
 import { defineConfig, globalIgnores } from "eslint/config";
 import nextVitals from "eslint-config-next/core-web-vitals";
 import nextTs from "eslint-config-next/typescript";

@@ -1,8 +1,14 @@
+/**
+ * Application Global Styles.
+ * Defines CSS variables for the design system (OKLCH colors).
+ * Includes animation definitions and utility classes.
+ */
 @import 'tailwindcss';
 @import 'tw-animate-css';
 
 @custom-variant dark (&:is(.dark *));
 
+/* Root Variables - Light Mode Theme */
 :root {
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
@@ -39,6 +45,7 @@
   --sidebar-ring: oklch(0.708 0 0);
 }
 
+/* Dark Mode Theme Overrides */
 .dark {
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);
@@ -74,6 +81,7 @@
   --sidebar-ring: oklch(0.439 0 0);
 }
 
+/* Tailwind Theme Configuration */
 @theme inline {
   --font-sans: 'Geist', 'Geist Fallback';
   --font-mono: 'Geist Mono', 'Geist Mono Fallback';
@@ -115,6 +123,7 @@
   --color-sidebar-ring: var(--sidebar-ring);
 }
 
+/* Base Layer Styles */
 @layer base {
   * {
     @apply border-border outline-ring/50;
