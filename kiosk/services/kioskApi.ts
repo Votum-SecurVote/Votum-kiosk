@@ -1,11 +1,20 @@
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"
 
+/**
+ * Kiosk API Service.
+ * Handles communication with the backend for Kiosk operations.
+ */
 export interface LoginRequest {
     email: string
     password: string
     aadhaar: string
 }
 
+/**
+ * Authenticates the Kiosk.
+ * Sends email, password, and Aadhaar for verification.
+ * Returns a session token or throws an error.
+ */
 export const kioskLogin = async (data: LoginRequest): Promise<string> => {
     const response = await fetch(`${BASE_URL}/api/kiosk/login`, {
         method: "POST",
@@ -24,6 +33,10 @@ export const kioskLogin = async (data: LoginRequest): Promise<string> => {
 }
 
 // Get active election
+/**
+ * Fetches the currently active election.
+ * Requires a valid Kiosk token.
+ */
 export const getActiveElection = async () => {
     const token = localStorage.getItem("kiosk_token")
 
@@ -38,6 +51,9 @@ export const getActiveElection = async () => {
 }
 
 // Get ballots
+/**
+ * Fetches ballots for a specific election.
+ */
 export const getBallots = async (electionId: string) => {
     const token = localStorage.getItem("kiosk_token")
 
@@ -55,6 +71,9 @@ export const getBallots = async (electionId: string) => {
 }
 
 // Get candidates
+/**
+ * Fetches candidates for a specific ballot.
+ */
 export const getCandidates = async (ballotId: string) => {
     const token = localStorage.getItem("kiosk_token")
 
