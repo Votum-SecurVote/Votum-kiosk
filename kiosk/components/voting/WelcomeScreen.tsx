@@ -29,7 +29,7 @@ function CurrentTime() {
   }, [])
 
   return (
-    <p className="font-mono text-xl font-black tracking-widest text-slate-900">
+    <p suppressHydrationWarning className="font-mono text-xl font-black tracking-widest text-slate-900">
       {time.toLocaleTimeString([], {
         hour: "2-digit",
         minute: "2-digit",
