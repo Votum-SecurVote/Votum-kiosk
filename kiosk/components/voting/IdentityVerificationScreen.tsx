@@ -7,6 +7,11 @@ import { Button } from "@/components/ui/button"
 import { useVotingContext } from "@/components/voting/VotingContext"
 import { ChevronRight } from "lucide-react"
 
+/**
+ * Identity Verification Screen.
+ * Handles multi-step verification: Aadhaar Input -> OTP -> Face Verification.
+ * Interfaces with backend Kiosk API.
+ */
 export function IdentityVerificationScreen() {
   const { setScreen, setVerified } = useVotingContext()
 
@@ -22,11 +27,13 @@ export function IdentityVerificationScreen() {
   const videoRef = useRef<HTMLVideoElement>(null)
 
 
+  // Format Aadhaar number with spaces
   const formatAadhaar = (value: string) => {
     const digits = value.replace(/\D/g, "").slice(0, 12)
     return digits.replace(/(\d{4})(?=\d)/g, "$1 ")
   }
 
+  // Handle OTP Dispatch
   const handleSendOtp = async () => {
     if (aadhaar.replace(/\s/g, "").length !== 12) {
       setError("ENTER VALID 12-DIGIT AADHAAR")
@@ -66,6 +73,7 @@ export function IdentityVerificationScreen() {
   }
 
 
+  // Verify OTP Input
   const handleVerifyOtp = () => {
     if (otp.length !== 6) {
       setError("ENTER VALID 6-DIGIT OTP")
@@ -80,6 +88,7 @@ export function IdentityVerificationScreen() {
     }, 1500)
   }
 
+  // Initialize Camera for Face Eval
   const startCamera = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({

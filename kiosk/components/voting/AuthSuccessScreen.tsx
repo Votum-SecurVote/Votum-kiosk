@@ -5,6 +5,11 @@ import { Button } from "@/components/ui/button"
 import { useVotingContext } from "@/components/voting/VotingContext"
 import { Check } from "lucide-react"
 
+/**
+ * Authentication Success Screen.
+ * Displays confirmation of identity verification.
+ * Automatically transitions to the Ballot screen.
+ */
 export function AuthSuccessScreen() {
   const { setScreen } = useVotingContext()
 

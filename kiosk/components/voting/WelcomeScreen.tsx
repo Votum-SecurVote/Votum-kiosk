@@ -10,6 +10,7 @@ interface WelcomeScreenProps {
   onLanguageSelect: (lang: string) => void
 }
 
+// Supported languages configuration
 const LANGUAGES = [
   { code: 'en', label: 'English' },
   { code: 'hi', label: 'हिंदी' },
@@ -39,6 +40,11 @@ function CurrentTime() {
   )
 }
 
+/**
+ * Welcome Screen Component.
+ * First screen of the kiosk.
+ * Handles language selection and initiation of the voting process.
+ */
 export function WelcomeScreen({ onLanguageSelect }: WelcomeScreenProps) {
   const { setScreen } = useVotingContext()
   const [selectedLang, setSelectedLang] = useState('en')

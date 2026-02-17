@@ -2,6 +2,10 @@
 
 import React, { createContext, useContext, useState } from "react"
 
+/**
+ * Candidate Interface.
+ * Represents a candidate in the election.
+ */
 interface Candidate {
   id: string
   name: string
@@ -10,6 +14,10 @@ interface Candidate {
   image: string
 }
 
+/**
+ * Application Screens.
+ * Defines the possible states of the kiosk application flow.
+ */
 type Screen =
   | "welcome"
   | "identity"
@@ -18,6 +26,10 @@ type Screen =
   | "confirmation"
   | "submitted"
 
+/**
+ * Voting Context Interface.
+ * Defines state and methods available throughout the voting flow.
+ */
 interface VotingContextType {
   screen: Screen
   setScreen: (screen: Screen) => void
@@ -32,6 +44,10 @@ interface VotingContextType {
 
 const VotingContext = createContext<VotingContextType | undefined>(undefined)
 
+/**
+ * Voting Context Provider.
+ * Manages global state including current screen, verification status, and selected vote.
+ */
 export function VotingProvider({ children }: { children: React.ReactNode }) {
   const [screen, setScreen] = useState<Screen>("welcome")
   const [verified, setVerified] = useState(false)
@@ -65,6 +81,11 @@ export function VotingProvider({ children }: { children: React.ReactNode }) {
   )
 }
 
+/**
+ * Custom Hook: useVotingContext
+ * Accesses the voting context state.
+ * Throws error if used outside VotingProvider.
+ */
 export function useVotingContext() {
   const context = useContext(VotingContext)
   if (context === undefined) {

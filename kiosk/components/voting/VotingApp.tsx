@@ -9,6 +9,11 @@ import { BallotScreen } from "@/components/voting/BallotScreen"
 import { ConfirmationScreen } from "@/components/voting/ConfirmationScreen"
 import { VoteSubmittedScreen } from "@/components/voting/VoteSubmittedScreen"
 
+/**
+ * Voting App Content.
+ * Main router component that switches screens based on state.
+ * Implements Kiosk security measures (disabling shortcuts, context menu).
+ */
 function VotingAppContent() {
   const {
     screen,
@@ -68,6 +73,10 @@ function VotingAppContent() {
   )
 }
 
+/**
+ * Voting App Root.
+ * Wraps content with the VotingProvider.
+ */
 export function VotingApp() {
   return (
     <VotingProvider>
