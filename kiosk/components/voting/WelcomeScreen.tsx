@@ -10,13 +10,7 @@ interface WelcomeScreenProps {
   onLanguageSelect: (lang: string) => void
 }
 
-// Supported languages configuration
-const LANGUAGES = [
-  { code: 'en', label: 'English' },
-  { code: 'hi', label: 'हिंदी' },
-  { code: 'ta', label: 'தமிழ்' },
-  { code: 'te', label: 'తెలుగు' },
-]
+import { useTranslation, LANGUAGES } from "@/components/voting/useTranslation"
 
 function CurrentTime() {
   const [time, setTime] = useState(new Date())
@@ -47,6 +41,7 @@ function CurrentTime() {
  */
 export function WelcomeScreen({ onLanguageSelect }: WelcomeScreenProps) {
   const { setScreen } = useVotingContext()
+  const { t } = useTranslation()
   const [selectedLang, setSelectedLang] = useState('en')
 
   return (
@@ -63,7 +58,7 @@ export function WelcomeScreen({ onLanguageSelect }: WelcomeScreenProps) {
               <span className="text-primary">VOTUM</span>
             </h1>
             <p className="text-xs font-bold text-slate-400">
-              Kiosk Voting Platform
+              {t("kiosk_platform")}
             </p>
           </div>
         </div>
@@ -80,7 +75,7 @@ export function WelcomeScreen({ onLanguageSelect }: WelcomeScreenProps) {
           <div className="mb-12 space-y-4">
             <div className="flex items-center gap-2 font-bold text-primary">
               <Languages className="h-6 w-6" />
-              <span>STEP 1: CHOOSE LANGUAGE</span>
+              <span>{t("step_1_choose_language")}</span>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
@@ -108,7 +103,7 @@ export function WelcomeScreen({ onLanguageSelect }: WelcomeScreenProps) {
             onClick={() => setScreen("identity")}
             className="group relative h-28 w-full rounded-none bg-slate-900 text-3xl font-black uppercase tracking-widest text-white hover:bg-slate-800"
           >
-            Begin Voting
+            {t("begin_voting")}
             <ChevronRight className="ml-4 h-10 w-10 transition-transform group-hover:translate-x-2" />
             <div className="absolute -bottom-2 -right-2 -z-10 h-full w-full bg-primary/20" />
           </Button>
@@ -117,24 +112,24 @@ export function WelcomeScreen({ onLanguageSelect }: WelcomeScreenProps) {
         {/* Right */}
         <section className="hidden flex-1 flex-col justify-center bg-slate-50 px-12 lg:flex">
           <h2 className="mb-8 text-xl font-black uppercase tracking-tight text-slate-400">
-            Preparation Checklist
+            {t("prep_checklist")}
           </h2>
 
           <div className="space-y-10">
             <ChecklistBox
               icon={<ShieldCheck className="h-8 w-8 text-primary" />}
-              title="Identity Ready"
-              description="Have your physical Aadhaar card or Digital ID ready for scanning."
+              title={t("identity_ready_title")}
+              description={t("identity_ready_desc")}
             />
             <ChecklistBox
               icon={<UserCheck className="h-8 w-8 text-primary" />}
-              title="Clear Face"
-              description="Remove hats, masks, or heavy glasses for biometric facial match."
+              title={t("clear_face_title")}
+              description={t("clear_face_desc")}
             />
             <ChecklistBox
               icon={<Eye className="h-8 w-8 text-primary" />}
-              title="Privacy Guard"
-              description="Ensure no one else is looking at the screen while you vote."
+              title={t("privacy_guard_title")}
+              description={t("privacy_guard_desc")}
             />
           </div>
         </section>
