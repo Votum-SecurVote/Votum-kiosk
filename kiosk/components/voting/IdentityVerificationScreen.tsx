@@ -5,6 +5,7 @@ import { kioskLogin } from "@/services/kioskApi"
 import React, { useState, useRef, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { useVotingContext } from "@/components/voting/VotingContext"
+import { useTranslation } from "@/components/voting/useTranslation"
 import { ChevronRight } from "lucide-react"
 
 /**
@@ -14,6 +15,7 @@ import { ChevronRight } from "lucide-react"
  */
 export function IdentityVerificationScreen() {
   const { setScreen, setVerified } = useVotingContext()
+  const { t } = useTranslation()
 
   // --- NEW STATE FOR EMAIL & PASSWORD ---
   const [aadhaar, setAadhaar] = useState("")
@@ -36,17 +38,17 @@ export function IdentityVerificationScreen() {
   // Handle OTP Dispatch
   const handleSendOtp = async () => {
     if (aadhaar.replace(/\s/g, "").length !== 12) {
-      setError("ENTER VALID 12-DIGIT AADHAAR")
+      setError(t("err_aadhaar"))
       return
     }
 
     if (!email.includes("@") || !email.includes(".")) {
-      setError("ENTER VALID EMAIL ADDRESS")
+      setError(t("err_email"))
       return
     }
 
     if (password.length < 6) {
-      setError("PASSWORD MUST BE AT LEAST 6 CHARACTERS")
+      setError(t("err_password"))
       return
     }
 
@@ -76,7 +78,7 @@ export function IdentityVerificationScreen() {
   // Verify OTP Input
   const handleVerifyOtp = () => {
     if (otp.length !== 6) {
-      setError("ENTER VALID 6-DIGIT OTP")
+      setError(t("err_otp"))
       return
     }
     setLoading(true)
@@ -98,7 +100,7 @@ export function IdentityVerificationScreen() {
         videoRef.current.srcObject = stream
       }
     } catch {
-      setError("CAMERA ACCESS DENIED")
+      setError(t("err_camera"))
     }
   }
 
@@ -163,7 +165,7 @@ export function IdentityVerificationScreen() {
               <span className="text-primary">VOTUM</span>
             </h1>
             <p className="text-xs font-bold text-slate-400">
-              Kiosk Voting Platform
+              {t("kiosk_platform")}
             </p>
           </div>
         </div>
@@ -180,10 +182,10 @@ export function IdentityVerificationScreen() {
           {/* TITLE */}
           <div className="mb-6">
             <h2 className="text-3xl font-black uppercase tracking-tight text-primary mb-2">
-              Identity Verification
+              {t("identity_verification")}
             </h2>
             <p className="text-slate-500 font-medium">
-              Step {step === "aadhaar" ? "1" : step === "otp" ? "2" : "3"} of 3
+              {t("step")} {step === "aadhaar" ? "1" : step === "otp" ? "2" : "3"} {t("of_3")}
             </p>
           </div>
 
@@ -192,7 +194,7 @@ export function IdentityVerificationScreen() {
             <div className="space-y-4">
               {/* Aadhaar Input */}
               <div>
-                <label className="mb-1 block text-sm font-bold uppercase text-slate-500">Aadhaar Number</label>
+                <label className="mb-1 block text-sm font-bold uppercase text-slate-500">{t("aadhaar_number")}</label>
                 <input
                   type="text"
                   placeholder="0000 0000 0000"
@@ -204,7 +206,7 @@ export function IdentityVerificationScreen() {
 
               {/* Email Input */}
               <div>
-                <label className="mb-1 block text-sm font-bold uppercase text-slate-500">Email Address</label>
+                <label className="mb-1 block text-sm font-bold uppercase text-slate-500">{t("email_address")}</label>
                 <input
                   type="email"
                   placeholder="VOTER@EXAMPLE.COM"
@@ -216,7 +218,7 @@ export function IdentityVerificationScreen() {
 
               {/* Password Input */}
               <div>
-                <label className="mb-1 block text-sm font-bold uppercase text-slate-500">Password</label>
+                <label className="mb-1 block text-sm font-bold uppercase text-slate-500">{t("password")}</label>
                 <input
                   type="password"
                   placeholder="••••••••"
@@ -233,7 +235,7 @@ export function IdentityVerificationScreen() {
                 disabled={loading}
                 className="mt-2 h-20 w-full rounded-none bg-slate-900 text-2xl font-black uppercase tracking-widest text-white hover:bg-slate-800"
               >
-                {loading ? "Sending..." : "Send OTP"}
+                {loading ? t("sending") : t("send_otp")}
                 <ChevronRight className="ml-4 h-8 w-8" />
               </Button>
             </div>
@@ -259,7 +261,7 @@ export function IdentityVerificationScreen() {
                 disabled={loading}
                 className="h-20 w-full rounded-none bg-slate-900 text-2xl font-black uppercase tracking-widest text-white hover:bg-slate-800"
               >
-                {loading ? "Verifying..." : "Verify OTP"}
+                {loading ? t("verifying") : t("verify_otp")}
                 <ChevronRight className="ml-4 h-8 w-8" />
               </Button>
             </div>
@@ -296,7 +298,7 @@ export function IdentityVerificationScreen() {
                 disabled={loading}
                 className="h-16 w-full rounded-none bg-slate-900 text-lg font-black uppercase tracking-widest text-white hover:bg-slate-800"
               >
-                {loading ? "Processing..." : "Complete Verification"}
+                {loading ? t("processing") : t("complete_verification")}
               </Button>
             </div>
           )}
@@ -307,11 +309,11 @@ export function IdentityVerificationScreen() {
             variant="outline"
             className="mt-6 h-16 w-full rounded-none border-4 border-primary text-primary font-black uppercase hover:bg-primary hover:text-white"
           >
-            Back
+            {t("back")}
           </Button>
 
           <div className="mt-6 border-t border-slate-200 pt-4 text-center text-sm font-medium text-slate-500">
-            🔒 Your information is encrypted. We do not store Aadhaar or facial data.
+            🔒 {t("info_encrypted")}
           </div>
 
         </section>

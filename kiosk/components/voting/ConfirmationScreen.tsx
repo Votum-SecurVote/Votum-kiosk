@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { useVotingContext } from "@/components/voting/VotingContext"
+import { useTranslation } from "@/components/voting/useTranslation"
 import { AlertTriangle, Lock, ArrowLeft, CheckCircle2, Vote } from "lucide-react"
 
 /**
@@ -13,6 +14,7 @@ import { AlertTriangle, Lock, ArrowLeft, CheckCircle2, Vote } from "lucide-react
  */
 export function ConfirmationScreen() {
   const { selectedCandidate, setScreen } = useVotingContext()
+  const { t } = useTranslation()
   const [reAuthPassword, setReAuthPassword] = useState("")
   const [step, setStep] = useState<"confirm" | "auth">("confirm")
   const [error, setError] = useState("")
@@ -27,7 +29,7 @@ export function ConfirmationScreen() {
   // Final Vote Submission (Mocked Password Check)
   const handleVerifyPassword = () => {
     if (!reAuthPassword) {
-      setError("PASSWORD REQUIRED")
+      setError(t("password_required"))
       return
     }
     setLoading(true)
@@ -86,7 +88,7 @@ export function ConfirmationScreen() {
               <span className="text-primary">VOTUM</span>
             </h1>
             <p className="text-xs font-bold text-slate-400">
-              Kiosk Voting Platform
+              {t("kiosk_platform")}
             </p>
           </div>
         </div>
@@ -105,10 +107,10 @@ export function ConfirmationScreen() {
 
               <div className="text-center">
                 <h2 className="text-3xl font-black uppercase tracking-tighter text-slate-900">
-                  Confirm Selection
+                  {t("confirm_selection")}
                 </h2>
                 <p className="font-bold text-slate-400 uppercase tracking-widest text-sm mt-2">
-                  Step 1 of 2
+                  {t("step_1_of_2")}
                 </p>
               </div>
 
@@ -134,10 +136,9 @@ export function ConfirmationScreen() {
               <div className="flex gap-4 border-l-8 border-amber-400 bg-amber-50 p-5">
                 <AlertTriangle className="h-8 w-8 shrink-0 text-amber-600" />
                 <div>
-                  <h4 className="font-black uppercase text-amber-700">Irreversible Action</h4>
+                  <h4 className="font-black uppercase text-amber-700">{t("irreversible_action")}</h4>
                   <p className="text-sm font-medium text-amber-800/80 leading-relaxed">
-                    Once you proceed to the next step, your choice is locked.
-                    Please verify that this is the candidate you intend to support.
+                    {t("irreversible_desc")}
                   </p>
                 </div>
               </div>
@@ -150,13 +151,13 @@ export function ConfirmationScreen() {
                   className="h-16 rounded-none border-4 border-slate-200 text-lg font-bold uppercase text-slate-500 hover:bg-slate-50 hover:text-slate-700"
                 >
                   <ArrowLeft className="mr-2 h-5 w-5" />
-                  Return
+                  {t("return")}
                 </Button>
                 <Button
                   onClick={handleProceedToAuth}
                   className="h-16 rounded-none bg-primary text-lg font-black uppercase tracking-wider text-white hover:bg-primary/90"
                 >
-                  Confirm & Verify
+                  {t("confirm_and_verify")}
                 </Button>
               </div>
             </div>
@@ -168,23 +169,23 @@ export function ConfirmationScreen() {
 
               <div className="text-center">
                 <h2 className="text-3xl font-black uppercase tracking-tighter text-slate-900">
-                  Final Verification
+                  {t("final_verification")}
                 </h2>
                 <p className="font-bold text-slate-400 uppercase tracking-widest text-sm mt-2">
-                  Step 2 of 2
+                  {t("step_2_of_2")}
                 </p>
               </div>
 
               <div className="bg-slate-100 p-6 border-2 border-slate-200">
                 <div className="flex items-center justify-between mb-6 pb-6 border-b-2 border-slate-200">
-                  <span className="text-sm font-bold uppercase text-slate-500">Casting vote for:</span>
+                  <span className="text-sm font-bold uppercase text-slate-500">{t("casting_vote_for")}</span>
                   <span className="text-xl font-black uppercase text-slate-900">{selectedCandidate.name}</span>
                 </div>
 
                 <div className="space-y-4">
                   <label className="flex items-center gap-2 text-sm font-bold uppercase text-slate-700">
                     <Lock className="h-4 w-4" />
-                    Enter Security Password
+                    {t("enter_security_password")}
                   </label>
 
                   <input
@@ -217,7 +218,7 @@ export function ConfirmationScreen() {
                   className="h-16 rounded-none border-4 border-slate-200 text-lg font-bold uppercase text-slate-500 hover:bg-slate-50 hover:text-slate-700"
                 >
                   <ArrowLeft className="mr-2 h-5 w-5" />
-                  Back
+                  {t("back")}
                 </Button>
 
                 <Button
@@ -229,12 +230,12 @@ export function ConfirmationScreen() {
                 >
                   {loading ? (
                     <span className="flex items-center gap-2">
-                      Processing...
+                      {t("processing")}
                     </span>
                   ) : (
                     <span className="flex items-center gap-2">
                       <Vote className="h-5 w-5" />
-                      Cast Final Vote
+                      {t("cast_final_vote")}
                     </span>
                   )}
                 </Button>

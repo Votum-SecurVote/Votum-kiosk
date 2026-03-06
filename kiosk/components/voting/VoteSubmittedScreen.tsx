@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { useVotingContext } from "@/components/voting/VotingContext"
+import { useTranslation } from "@/components/voting/useTranslation"
 import { Check, Copy, Printer, FileCheck, ShieldCheck } from "lucide-react"
 
 /**
@@ -12,6 +13,7 @@ import { Check, Copy, Printer, FileCheck, ShieldCheck } from "lucide-react"
  */
 export function VoteSubmittedScreen() {
   const { reset } = useVotingContext()
+  const { t } = useTranslation()
   const [receiptHash] = useState("SHA256:a7f2c8e9d1b3f4a6c2e9b1d3f5a7c9e")
   const [copied, setCopied] = useState(false)
   const [timeLeft, setTimeLeft] = useState(30)
@@ -78,7 +80,7 @@ export function VoteSubmittedScreen() {
               <span className="text-primary">VOTUM</span>
             </h1>
             <p className="text-xs font-bold text-slate-400">
-              Kiosk Voting Platform
+              {t("kiosk_platform")}
             </p>
           </div>
         </div>
@@ -97,10 +99,10 @@ export function VoteSubmittedScreen() {
               <Check className="h-14 w-14 stroke-[4]" />
             </div>
             <h2 className="text-4xl font-black uppercase tracking-tight text-emerald-900">
-              Vote Recorded
+              {t("vote_recorded")}
             </h2>
             <p className="mt-2 font-bold uppercase tracking-widest text-emerald-700/80">
-              Submission Successful
+              {t("submission_successful")}
             </p>
           </div>
 
@@ -109,17 +111,17 @@ export function VoteSubmittedScreen() {
             <div className="mb-6 flex items-center justify-between border-b-4 border-slate-100 pb-4">
               <h3 className="flex items-center gap-2 text-xl font-black uppercase text-slate-900">
                 <FileCheck className="h-6 w-6 text-primary" />
-                Digital Receipt
+                {t("digital_receipt")}
               </h3>
               <span className="bg-slate-100 px-2 py-1 text-xs font-bold uppercase text-slate-400">
-                Do Not Share
+                {t("do_not_share")}
               </span>
             </div>
 
             <div className="space-y-4">
               <div className="space-y-1">
                 <label className="text-xs font-bold uppercase text-slate-500">
-                  Cryptographic Hash
+                  {t("cryptographic_hash")}
                 </label>
                 <div className="break-all border-2 border-slate-200 bg-slate-50 p-4 font-mono text-sm font-bold text-slate-700">
                   {receiptHash}
@@ -134,11 +136,11 @@ export function VoteSubmittedScreen() {
                 >
                   {copied ? (
                     <span className="flex items-center gap-2 text-emerald-600">
-                      <Check className="h-4 w-4" /> Copied
+                      <Check className="h-4 w-4" /> {t("copied")}
                     </span>
                   ) : (
                     <span className="flex items-center gap-2">
-                      <Copy className="h-4 w-4" /> Copy Hash
+                      <Copy className="h-4 w-4" /> {t("copy_hash")}
                     </span>
                   )}
                 </Button>
@@ -148,7 +150,7 @@ export function VoteSubmittedScreen() {
                   className="h-14 flex-1 rounded-none border-4 border-slate-200 text-sm font-bold uppercase hover:bg-slate-50 hover:text-primary"
                 >
                   <Printer className="mr-2 h-4 w-4" />
-                  Print Receipt
+                  {t("print_receipt")}
                 </Button>
               </div>
             </div>
@@ -159,11 +161,10 @@ export function VoteSubmittedScreen() {
             <ShieldCheck className="h-8 w-8 shrink-0 text-slate-400" />
             <div className="space-y-1 text-sm text-slate-600">
               <p className="font-bold uppercase text-slate-900">
-                Privacy Assurance
+                {t("privacy_assurance")}
               </p>
               <p>
-                Your vote has been anonymized. This session data will be permanently wiped
-                from local storage upon reset.
+                {t("privacy_assurance_desc")}
               </p>
             </div>
           </div>
@@ -176,17 +177,17 @@ export function VoteSubmittedScreen() {
         <div className="flex items-center gap-6">
           <div className="flex-1">
             <p className="text-xs font-bold uppercase text-slate-400">
-              Auto-Reset Timer
+              {t("auto_reset_timer")}
             </p>
             <p className="text-lg font-black uppercase text-slate-900">
-              Returning to home in {timeLeft}s
+              {t("returning_to_home")} {timeLeft}s
             </p>
           </div>
           <Button
             onClick={reset}
             className="h-16 w-64 rounded-none bg-slate-900 text-lg font-black uppercase tracking-widest text-white hover:bg-primary"
           >
-            Finish & Logout
+            {t("finish_and_logout")}
           </Button>
         </div>
       </footer>

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { useVotingContext } from "@/components/voting/VotingContext"
+import { useTranslation } from "@/components/voting/useTranslation"
 import { Check } from "lucide-react"
 
 /**
@@ -12,6 +13,7 @@ import { Check } from "lucide-react"
  */
 export function AuthSuccessScreen() {
   const { setScreen } = useVotingContext()
+  const { t } = useTranslation()
 
   const [countdown, setCountdown] = useState(3)
 
@@ -66,7 +68,7 @@ export function AuthSuccessScreen() {
               <span className="text-primary">VOTUM</span>
             </h1>
             <p className="text-xs font-bold text-slate-400">
-              Kiosk Voting Platform
+              {t("kiosk_platform")}
             </p>
           </div>
         </div>
@@ -87,26 +89,26 @@ export function AuthSuccessScreen() {
 
           {/* TITLE */}
           <h2 className="mb-4 text-3xl font-black uppercase tracking-tight text-primary">
-            Identity Verified
+            {t("identity_verified")}
           </h2>
 
           {/* DESCRIPTION */}
           <p className="mb-10 text-lg font-medium text-slate-600">
-            Your identity has been successfully verified.
+            {t("auth_success_desc1")}
             <br />
-            You are authorized to proceed with voting.
+            {t("auth_success_desc2")}
           </p>
 
           {/* AUTO REDIRECT INFO */}
           <div className="mb-8 border-2 border-slate-200 bg-slate-50 px-6 py-4 text-sm font-bold uppercase text-slate-600">
-            Redirecting to ballot in {countdown} seconds…
+            {t("redirecting_in")} {countdown} {t("seconds")}
           </div>
 
           {/* MANUAL BUTTON */}
           <Button
             onClick={() => setScreen("ballot")}
             className="h-20 w-full rounded-none bg-slate-900 text-xl font-black uppercase tracking-widest text-white hover:bg-slate-800">
-            Proceed to Ballot
+            {t("proceed_to_ballot")}
           </Button>
 
 

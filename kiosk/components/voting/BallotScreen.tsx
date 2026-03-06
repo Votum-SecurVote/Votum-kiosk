@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { useVotingContext } from "@/components/voting/VotingContext"
+import { useTranslation } from "@/components/voting/useTranslation"
 import { Check, AlertCircle } from "lucide-react"
 import { getActiveElection, getBallots, getCandidates } from "@/services/kioskApi"
 
@@ -44,6 +45,7 @@ function CurrentTime() {
  */
 export function BallotScreen() {
   const { setScreen, selectedCandidate, setSelectedCandidate } = useVotingContext()
+  const { t } = useTranslation()
 
   const [candidates, setCandidates] = useState<Candidate[]>([])
   const [loading, setLoading] = useState(true)
@@ -84,7 +86,7 @@ export function BallotScreen() {
 
   const handleConfirm = () => {
     if (!selectedCandidate) {
-      setError("You must select a candidate to proceed.")
+      setError(t("err_must_select"))
       return
     }
     setScreen("confirmation")
@@ -104,7 +106,7 @@ export function BallotScreen() {
               <span className="text-primary">VOTUM</span>
             </h1>
             <p className="text-xs font-bold text-slate-400">
-              Kiosk Voting Platform
+              {t("kiosk_platform")}
             </p>
           </div>
         </div>
@@ -118,13 +120,13 @@ export function BallotScreen() {
 
         <div className="shrink-0 bg-slate-50 px-8 py-6 border-b-2 border-slate-200">
           <h2 className="text-3xl font-black uppercase tracking-tight text-slate-900">
-            Official Ballot
+            {t("official_ballot")}
           </h2>
         </div>
 
         <div className="flex-1 overflow-y-auto p-8 bg-slate-100/50">
           {loading ? (
-            <p className="text-center font-bold">Loading candidates...</p>
+            <p className="text-center font-bold">{t("loading_candidates")}</p>
           ) : (
             <div className="grid gap-6 md:grid-cols-2 lg:gap-8">
               {candidates.map((candidate) => {
@@ -172,14 +174,14 @@ export function BallotScreen() {
             variant="ghost"
             className="h-20 flex-1"
           >
-            Cancel
+            {t("cancel")}
           </Button>
 
           <Button
             onClick={handleConfirm}
             className="h-20 flex-[3]"
           >
-            Confirm Vote
+            {t("confirm_vote")}
           </Button>
         </div>
       </footer>
