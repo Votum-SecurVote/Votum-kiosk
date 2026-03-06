@@ -210,7 +210,7 @@ export function IdentityVerificationScreen() {
                   placeholder="VOTER@EXAMPLE.COM"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="h-16 w-full border-4 border-slate-200 px-4 text-xl font-bold uppercase tracking-wide focus:border-primary focus:outline-none"
+                  className="h-16 w-full border-4 border-slate-200 px-4 text-xl font-bold tracking-wide focus:border-primary focus:outline-none"
                 />
               </div>
 

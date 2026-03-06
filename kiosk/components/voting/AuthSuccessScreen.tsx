@@ -13,11 +13,21 @@ import { Check } from "lucide-react"
 export function AuthSuccessScreen() {
   const { setScreen } = useVotingContext()
 
+  const [countdown, setCountdown] = useState(3)
+
   useEffect(() => {
-    const timer = setTimeout(() => {
+    const redirectTimer = setTimeout(() => {
       setScreen("ballot")
     }, 3000)
-    return () => clearTimeout(timer)
+
+    const interval = setInterval(() => {
+      setCountdown((prev) => (prev > 0 ? prev - 1 : 0))
+    }, 1000)
+
+    return () => {
+      clearTimeout(redirectTimer)
+      clearInterval(interval)
+    }
   }, [setScreen])
 
   function CurrentTime() {
@@ -89,7 +99,7 @@ export function AuthSuccessScreen() {
 
           {/* AUTO REDIRECT INFO */}
           <div className="mb-8 border-2 border-slate-200 bg-slate-50 px-6 py-4 text-sm font-bold uppercase text-slate-600">
-            Redirecting to ballot in 3 seconds…
+            Redirecting to ballot in {countdown} seconds…
           </div>
 
           {/* MANUAL BUTTON */}
