@@ -37,6 +37,10 @@ interface VotingContextType {
   setVerified: (verified: boolean) => void
   selectedCandidate: Candidate | null
   setSelectedCandidate: (candidate: Candidate | null) => void
+  electionId: string | null
+  setElectionId: (id: string | null) => void
+  ballotId: string | null
+  setBallotId: (id: string | null) => void
   language: string
   setLanguage: (lang: string) => void
   reset: () => void
@@ -54,12 +58,16 @@ export function VotingProvider({ children }: { children: React.ReactNode }) {
   const [selectedCandidate, setSelectedCandidate] = useState<Candidate | null>(
     null
   )
+  const [electionId, setElectionId] = useState<string | null>(null)
+  const [ballotId, setBallotId] = useState<string | null>(null)
   const [language, setLanguage] = useState("en")
 
   const reset = () => {
     setScreen("welcome")
     setVerified(false)
     setSelectedCandidate(null)
+    setElectionId(null)
+    setBallotId(null)
   }
 
   return (
@@ -71,6 +79,10 @@ export function VotingProvider({ children }: { children: React.ReactNode }) {
         setVerified,
         selectedCandidate,
         setSelectedCandidate,
+        electionId,
+        setElectionId,
+        ballotId,
+        setBallotId,
         language,
         setLanguage,
         reset,

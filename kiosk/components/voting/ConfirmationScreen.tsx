@@ -4,7 +4,8 @@ import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { useVotingContext } from "@/components/voting/VotingContext"
 import { useTranslation } from "@/components/voting/useTranslation"
-import { AlertTriangle, Lock, ArrowLeft, CheckCircle2, Vote } from "lucide-react"
+import { castVote } from "@/services/kioskApi"
+import { AlertTriangle, ArrowLeft, Vote, Lock } from "lucide-react"
 
 /**
  * Confirmation Screen Component.
@@ -13,7 +14,7 @@ import { AlertTriangle, Lock, ArrowLeft, CheckCircle2, Vote } from "lucide-react
  * 2. Final security password entry to cast the vote.
  */
 export function ConfirmationScreen() {
-  const { selectedCandidate, setScreen } = useVotingContext()
+  const { selectedCandidate, setScreen, electionId, ballotId } = useVotingContext()
   const { t } = useTranslation()
   const [reAuthPassword, setReAuthPassword] = useState("")
   const [step, setStep] = useState<"confirm" | "auth">("confirm")
@@ -26,18 +27,25 @@ export function ConfirmationScreen() {
     setError("")
   }
 
-  // Final Vote Submission (Mocked Password Check)
-  const handleVerifyPassword = () => {
+  // Final Vote Submission
+  const handleVerifyPassword = async () => {
     if (!reAuthPassword) {
       setError(t("password_required"))
       return
     }
+    if (!electionId || !ballotId || !selectedCandidate) {
+      setError("Missing election or ballot data")
+      return
+    }
     setLoading(true)
-    // Simulate API call
-    setTimeout(() => {
-      setLoading(false)
+    try {
+      await castVote(electionId, ballotId, selectedCandidate.id)
       setScreen("submitted")
-    }, 1500)
+    } catch (err: any) {
+      setError(err.message || "Failed to cast vote")
+    } finally {
+      setLoading(false)
+    }
   }
 
   const handleBack = () => {

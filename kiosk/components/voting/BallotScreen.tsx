@@ -44,7 +44,7 @@ function CurrentTime() {
  * Fetches data from the backend upon mounting.
  */
 export function BallotScreen() {
-  const { setScreen, selectedCandidate, setSelectedCandidate } = useVotingContext()
+  const { setScreen, selectedCandidate, setSelectedCandidate, setElectionId, setBallotId } = useVotingContext()
   const { t } = useTranslation()
 
   const [candidates, setCandidates] = useState<Candidate[]>([])
@@ -68,6 +68,8 @@ export function BallotScreen() {
         const candidateData = await getCandidates(ballotId)
 
         setCandidates(candidateData)
+        setElectionId(election.id)
+        setBallotId(ballotId)
 
       } catch (err: any) {
         setError(err.message)

@@ -89,3 +89,27 @@ export const getCandidates = async (ballotId: string) => {
     if (!res.ok) throw new Error(await res.text())
     return res.json()
 }
+
+// Cast vote
+/**
+ * Casts a vote for a candidate.
+ */
+export const castVote = async (electionId: string, ballotId: string, candidateId: string) => {
+    const token = localStorage.getItem("kiosk_token")
+
+    const res = await fetch(`${BASE_URL}/api/kiosk/vote`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+            electionId,
+            ballotId,
+            candidateId,
+        }),
+    })
+
+    if (!res.ok) throw new Error(await res.text())
+    return res.text()
+}
