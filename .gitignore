@@ -1,0 +1,24 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# logs
+logs/
+
+# model weights
+*.pt
+*.pth
+*.onnx
+
+# env
+.env
+venv/
+
+# node
+node_modules/
+.next/
+
+# OS
+.DS_Store
+Thumbs.db
