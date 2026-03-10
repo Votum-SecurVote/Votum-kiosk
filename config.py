@@ -21,9 +21,9 @@ LIVENESS_MODEL_DIR = os.path.join(BASE_DIR, "Silent-Face-Anti-Spoofing", "resour
 # Verification Config
 SIMILARITY_THRESHOLD = 0.5  # Cosine similarity threshold for InsightFace embeddings
 
-YOLO_CONF_THRESH = 0.6
-PERSON_MIN_WIDTH = 80
-PERSON_MIN_HEIGHT = 120
+YOLO_CONF_THRESH = 0.45
+PERSON_MIN_WIDTH = 50
+PERSON_MIN_HEIGHT = 80
 PERSON_IOU_THRESH = 0.4
 PERSON_HISTORY_LEN = 5
 
