@@ -7,13 +7,19 @@ import { useTranslation } from "@/components/voting/useTranslation"
 import { Check, AlertCircle } from "lucide-react"
 import { getActiveElection, getBallots, getCandidates } from "@/services/kioskApi"
 
+const getImageUrl = (path: string) => {
+  if (!path) return ""
+  const cleanPath = path.startsWith("/") ? path.substring(1) : path
+  return `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"}/api/files/${cleanPath}`
+}
+
 // Local Interface for Candidate Display
 interface Candidate {
   id: string
   name: string
   party: string
-  symbol: string
-  image: string
+  symbolPath: string
+  photoPath: string
 }
 
 function CurrentTime() {
@@ -144,12 +150,36 @@ export function BallotScreen() {
                         : "border-slate-200 bg-white hover:border-slate-400"
                       }`}
                   >
-                    <div className="text-5xl">{candidate.symbol}</div>
-                    <div>
-                      <p className="text-sm font-bold text-slate-400">
-                        {candidate.party}
-                      </p>
-                      <p className="text-2xl font-black">
+                    <div className="h-24 w-24 shrink-0 overflow-hidden border-2 border-slate-200 bg-slate-100 rounded-full flex items-center justify-center">
+                      {candidate.photoPath ? (
+                        <img 
+                          src={getImageUrl(candidate.photoPath)} 
+                          alt={`${candidate.name}`}
+                          className="h-full w-full object-cover"
+                          onError={(e) => {
+                            (e.target as HTMLImageElement).src = `https://ui-avatars.com/api/?name=${encodeURIComponent(candidate.name)}&background=random`
+                          }}
+                        />
+                      ) : (
+                        <div className="text-4xl font-bold text-slate-400">
+                          {candidate.name.charAt(0)}
+                        </div>
+                      )}
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-1">
+                        {candidate.symbolPath && (
+                          <img 
+                            src={getImageUrl(candidate.symbolPath)}
+                            alt={`${candidate.party} logo`}
+                            className="h-6 w-6 object-contain"
+                          />
+                        )}
+                        <p className="text-sm font-bold text-slate-500 uppercase tracking-wider">
+                          {candidate.party}
+                        </p>
+                      </div>
+                      <p className="text-2xl font-black text-slate-800">
                         {candidate.name}
                       </p>
                     </div>

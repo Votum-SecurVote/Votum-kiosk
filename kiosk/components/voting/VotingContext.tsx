@@ -10,8 +10,8 @@ interface Candidate {
   id: string
   name: string
   party: string
-  symbol: string
-  image: string
+  symbolPath: string
+  photoPath: string
 }
 
 /**
