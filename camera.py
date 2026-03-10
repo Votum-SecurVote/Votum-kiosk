@@ -1,0 +1,24 @@
+import cv2
+
+def start_camera():
+
+    cap = cv2.VideoCapture(0)
+
+    while True:
+        ret, frame = cap.read()
+
+        if not ret:
+            print("Camera not working")
+            break
+
+        cv2.imshow("Voting Camera", frame)
+
+        if cv2.waitKey(1) == 27:
+            break
+
+    cap.release()
+    cv2.destroyAllWindows()
+
+
+if __name__ == "__main__":
+    start_camera()
