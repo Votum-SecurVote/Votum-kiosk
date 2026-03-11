@@ -90,10 +90,6 @@ export const getCandidates = async (ballotId: string) => {
     return res.json()
 }
 
-// Cast vote
-/**
- * Casts a vote for a candidate.
- */
 export const castVote = async (electionId: string, ballotId: string, candidateId: string) => {
     const token = localStorage.getItem("kiosk_token")
 
@@ -112,4 +108,21 @@ export const castVote = async (electionId: string, ballotId: string, candidateId
 
     if (!res.ok) throw new Error(await res.text())
     return res.text()
+}
+
+// Get user profile
+/**
+ * Fetches the user profile for the authenticated kiosk session.
+ */
+export const getUserProfile = async () => {
+    const token = localStorage.getItem("kiosk_token")
+
+    const res = await fetch(`${BASE_URL}/api/user/profile`, {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    })
+
+    if (!res.ok) throw new Error(await res.text())
+    return res.json()
 }
