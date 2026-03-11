@@ -7,6 +7,12 @@ import { useTranslation } from "@/components/voting/useTranslation"
 import { castVote } from "@/services/kioskApi"
 import { AlertTriangle, ArrowLeft, Vote, Lock } from "lucide-react"
 
+const getImageUrl = (path: string) => {
+  if (!path) return ""
+  const cleanPath = path.startsWith("/") ? path.substring(1) : path
+  return `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"}/api/files/${cleanPath}`
+}
+
 /**
  * Confirmation Screen Component.
  * Two-step verification process:
@@ -126,16 +132,36 @@ export function ConfirmationScreen() {
               <div className="relative border-4 border-slate-900 bg-slate-900 p-1">
                 <div className="flex flex-col items-center bg-white p-8 text-center border-2 border-white border-dashed">
 
-                  <div className="mb-4 flex h-24 w-24 items-center justify-center rounded-full bg-primary/10 text-6xl border-4 border-primary/20">
-                    {selectedCandidate.symbol}
+                  <div className="mb-4 flex h-32 w-32 items-center justify-center rounded-full overflow-hidden bg-slate-100 border-4 border-slate-200">
+                    {selectedCandidate.photoPath ? (
+                      <img 
+                        src={getImageUrl(selectedCandidate.photoPath)}
+                        alt={selectedCandidate.name}
+                        className="h-full w-full object-cover"
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).src = `https://ui-avatars.com/api/?name=${encodeURIComponent(selectedCandidate.name)}&background=random`
+                        }}
+                      />
+                    ) : (
+                      <span className="text-5xl font-bold text-slate-400">{selectedCandidate.name.charAt(0)}</span>
+                    )}
                   </div>
 
                   <h3 className="text-4xl font-black uppercase tracking-tight text-slate-900">
                     {selectedCandidate.name}
                   </h3>
 
-                  <div className="mt-2 inline-block bg-slate-100 px-3 py-1 text-sm font-bold uppercase tracking-wider text-slate-500">
-                    {selectedCandidate.party}
+                  <div className="mt-4 flex items-center justify-center gap-3 bg-slate-100 px-4 py-2">
+                    {selectedCandidate.symbolPath && (
+                      <img 
+                        src={getImageUrl(selectedCandidate.symbolPath)}
+                        alt={`${selectedCandidate.party} logo`}
+                        className="h-8 w-8 object-contain"
+                      />
+                    )}
+                    <span className="text-lg font-bold uppercase tracking-wider text-slate-600">
+                      {selectedCandidate.party}
+                    </span>
                   </div>
                 </div>
               </div>

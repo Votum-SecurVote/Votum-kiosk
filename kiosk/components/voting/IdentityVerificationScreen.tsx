@@ -1,7 +1,20 @@
 "use client"
 
-import { kioskLogin } from "@/services/kioskApi"
+import * as faceapi from "face-api.js"
+import { kioskLogin, getUserProfile } from "@/services/kioskApi"
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"
+
+function fileUrl(storagePath: string | undefined | null): string | null {
+  if (!storagePath) return null
+  const normalised = storagePath.replace(/\\/g, "/")
+  const idx = normalised.indexOf("users/")
+  if (idx === -1) {
+    return `${API_URL}/api/files/${normalised}`
+  }
+  const relative = normalised.slice(idx)
+  return `${API_URL}/api/files/${relative}`
+}
 import React, { useState, useRef, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { useVotingContext } from "@/components/voting/VotingContext"
@@ -28,6 +41,24 @@ export function IdentityVerificationScreen() {
   const [error, setError] = useState("")
   const videoRef = useRef<HTMLVideoElement>(null)
 
+  const [modelsLoaded, setModelsLoaded] = useState(false)
+  const [referenceDescriptor, setReferenceDescriptor] = useState<Float32Array | null>(null)
+  const [faceMatchProgress, setFaceMatchProgress] = useState("")
+
+  useEffect(() => {
+    const loadModels = async () => {
+      try {
+        await faceapi.nets.ssdMobilenetv1.loadFromUri('/models')
+        await faceapi.nets.faceLandmark68Net.loadFromUri('/models')
+        await faceapi.nets.faceRecognitionNet.loadFromUri('/models')
+        setModelsLoaded(true)
+      } catch (err) {
+        console.error("Failed to load models", err)
+        setError("Failed to load face models")
+      }
+    }
+    loadModels()
+  }, [])
 
   // Format Aadhaar number with spaces
   const formatAadhaar = (value: string) => {
@@ -76,18 +107,38 @@ export function IdentityVerificationScreen() {
 
 
   // Verify OTP Input
-  const handleVerifyOtp = () => {
+  const handleVerifyOtp = async () => {
     if (otp.length !== 6) {
       setError(t("err_otp"))
       return
     }
     setLoading(true)
-    setTimeout(() => {
-      setLoading(false)
-      setError("")
+    setError("")
+    try {
+      const profile = await getUserProfile()
+      const photoUrl = fileUrl(profile.photoPath)
+
+      if (!photoUrl) throw new Error("No reference photo found")
+
+      setFaceMatchProgress("Loading reference photo...")
+      const img = await faceapi.fetchImage(photoUrl)
+
+      setFaceMatchProgress("Computing reference face...")
+      const detection = await faceapi.detectSingleFace(img).withFaceLandmarks().withFaceDescriptor()
+
+      if (!detection) {
+        throw new Error("Could not detect face in reference photo")
+      }
+
+      setReferenceDescriptor(detection.descriptor)
       setStep("face")
       startCamera()
-    }, 1500)
+    } catch (err: any) {
+      setError(err.message || "Failed to prepare face verification")
+    } finally {
+      setLoading(false)
+      setFaceMatchProgress("")
+    }
   }
 
   // Initialize Camera for Face Eval
@@ -104,13 +155,36 @@ export function IdentityVerificationScreen() {
     }
   }
 
+  // Face continuous matching
+  useEffect(() => {
+    if (step === "face" && referenceDescriptor && videoRef.current) {
+      const videoId = setInterval(async () => {
+        if (videoRef.current && videoRef.current.readyState === 4) {
+          const detection = await faceapi.detectSingleFace(videoRef.current).withFaceLandmarks().withFaceDescriptor()
+          if (detection) {
+            const distance = faceapi.euclideanDistance(detection.descriptor, referenceDescriptor)
+            if (distance < 0.45) {
+              clearInterval(videoId)
+              handleCompleteFaceVerification()
+            } else {
+              setFaceMatchProgress("Face doesn't match... Please look at camera.")
+            }
+          } else {
+            setFaceMatchProgress("No face detected... Please look at camera.")
+          }
+        }
+      }, 1000)
+      return () => clearInterval(videoId)
+    }
+  }, [step, referenceDescriptor])
+
   const handleCompleteFaceVerification = () => {
-    setLoading(true)
-    setTimeout(() => {
-      setLoading(false)
-      setVerified(true)
-      setScreen("success")
-    }, 2000)
+    setVerified(true)
+    setScreen("success")
+    if (videoRef.current?.srcObject) {
+      const tracks = (videoRef.current.srcObject as MediaStream).getTracks()
+      tracks.forEach((track) => track.stop())
+    }
   }
 
   const handleBack = () => {
@@ -258,10 +332,10 @@ export function IdentityVerificationScreen() {
 
               <Button
                 onClick={handleVerifyOtp}
-                disabled={loading}
+                disabled={loading || !modelsLoaded}
                 className="h-20 w-full rounded-none bg-slate-900 text-2xl font-black uppercase tracking-widest text-white hover:bg-slate-800"
               >
-                {loading ? t("verifying") : t("verify_otp")}
+                {loading ? t("verifying") : (!modelsLoaded ? "Loading AI..." : t("verify_otp"))}
                 <ChevronRight className="ml-4 h-8 w-8" />
               </Button>
             </div>
@@ -293,12 +367,18 @@ export function IdentityVerificationScreen() {
                 </p>
               )}
 
+              {faceMatchProgress && !error && (
+                <p className="text-primary font-bold uppercase text-center">
+                  {faceMatchProgress}
+                </p>
+              )}
+
               <Button
                 onClick={handleCompleteFaceVerification}
-                disabled={loading}
+                disabled={true}
                 className="h-16 w-full rounded-none bg-slate-900 text-lg font-black uppercase tracking-widest text-white hover:bg-slate-800"
               >
-                {loading ? t("processing") : t("complete_verification")}
+                {t("processing") || "Verifying Live Face..."}
               </Button>
             </div>
           )}
