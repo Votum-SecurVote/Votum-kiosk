@@ -29,6 +29,13 @@ def detect_faces(frame):
             h = y2 - y1
             if w >= FACE_MIN_SIZE and h >= FACE_MIN_SIZE:
                 valid_faces.append(face)
+                
+        if len(valid_faces) > 1:
+            # Drop faces that are much smaller than the largest face (background faces)
+            valid_faces.sort(key=lambda f: (f.bbox[2]-f.bbox[0]) * (f.bbox[3]-f.bbox[1]), reverse=True)
+            max_area = (valid_faces[0].bbox[2]-valid_faces[0].bbox[0]) * (valid_faces[0].bbox[3]-valid_faces[0].bbox[1])
+            valid_faces = [f for f in valid_faces if (f.bbox[2]-f.bbox[0]) * (f.bbox[3]-f.bbox[1]) > max_area * 0.3]
+            
         return valid_faces
     except Exception as e:
         logger.error(f"Error during face detection: {e}")

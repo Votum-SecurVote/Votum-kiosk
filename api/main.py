@@ -188,18 +188,17 @@ async def run_verification_pipeline():
             if not ret or tmp_frame is None:
                 continue
                 
-            tmp_frame = preprocess_for_liveness(tmp_frame)
+            # Do not use preprocess_for_liveness as it blurs the image, destroying textures needed for spoof detection
             tmp_faces = detect_faces(tmp_frame)
             
             if len(tmp_faces) == 1:
                 tmp_face = tmp_faces[0]
                 x1, y1, x2, y2 = get_face_bbox(tmp_face)
-                h, w = tmp_frame.shape[:2]
-                x1, y1 = max(0, x1), max(0, y1)
-                x2, y2 = min(w, x2), min(h, y2)
-                face_crop = tmp_frame[y1:y2, x1:x2]
                 
-                score = check_liveness_single_frame(face_crop)
+                # Silent-Face-Anti-Spoofing needs bbox = [x, y, w, h]
+                bbox = [x1, y1, x2 - x1, y2 - y1]
+                
+                score = check_liveness_single_frame(tmp_frame, bbox)
                 liveness_scores.append(score)
                 log_and_broadcast("DEBUG", f"Frame {i+1} score: {score:.2f}")
             else:
@@ -210,40 +209,54 @@ async def run_verification_pipeline():
         if len(liveness_scores) == 0:
             avg_score = 0.0
         else:
-            avg_score = sum(liveness_scores) / len(liveness_scores)
+            avg_score = float(sum(liveness_scores) / len(liveness_scores))
             
         log_and_broadcast("DEBUG", f"Average liveness score: {avg_score:.2f}")
 
+        liveness_failed = False
         if avg_score < 0.5:
             steps[2]["status"] = "failed"
-            steps[2]["score"] = round(avg_score, 2)
-            steps[-1]["status"] = "failed"
-            await manager.broadcast_steps(steps)
-            log_and_broadcast("ERROR", "Failed: Spoof Attack Detected!")
-            await manager.broadcast_status("Spoof Attack Detected", "red")
-            return {"steps": steps}
+            liveness_failed = True
+        else:
+            steps[2]["status"] = "success"
             
-        steps[2]["status"] = "success"
-        steps[2]["score"] = round(avg_score, 2)
+        steps[2]["score"] = float(round(avg_score, 2))
         await manager.broadcast_steps(steps)
             
         # 4. Face Verification (Aadhaar Match)
+        # We run this even if liveness fails so the user can see the match score
         log_and_broadcast("INFO", "Running face match")
             
         is_match, similarity = verify_face(live_embedding, aadhaar_embedding)
+        similarity = float(similarity)
         log_and_broadcast("DEBUG", f"Face similarity: {similarity:.2f}")
 
         # Override default InsightFace thresholds to match User request similarity > 0.6 decision rule
         if similarity > 0.6:
             steps[3]["status"] = "success"
-            steps[3]["similarity"] = round(similarity, 2)
+            steps[3]["similarity"] = float(round(similarity, 2))
+        else:
+            steps[3]["status"] = "failed"
+            steps[3]["similarity"] = float(round(similarity, 2))
+            
+        if liveness_failed:
+            steps[4]["status"] = "failed"
+            await manager.broadcast_steps(steps)
+            
+            if similarity > 0.6:
+                log_and_broadcast("ERROR", "Failed: Face Matched but Spoof Attack Detected!")
+            else:
+                log_and_broadcast("ERROR", "Failed: Spoof Attack & Face Mismatch!")
+                
+            await manager.broadcast_status("Spoof Attack Detected", "red")
+            return {"steps": steps}
+            
+        if similarity > 0.6:
             steps[4]["status"] = "verified"
             await manager.broadcast_steps(steps)
             log_and_broadcast("SUCCESS", "Verification successful")
             await manager.broadcast_status("Voter Verified", "green")
         else:
-            steps[3]["status"] = "failed"
-            steps[3]["similarity"] = round(similarity, 2)
             steps[4]["status"] = "failed"
             await manager.broadcast_steps(steps)
             log_and_broadcast("ERROR", f"Verification failed. Match score: {similarity*100:.1f}%")
