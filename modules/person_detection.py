@@ -62,4 +62,10 @@ def count_persons_and_get_boxes(frame):
                 new_valid_boxes.append(box)
         valid_boxes = new_valid_boxes
 
+    if len(final_boxes) > 1:
+        # Drop boxes that are much smaller than the largest person (e.g. background people or photos)
+        final_boxes.sort(key=lambda b: (b[2]-b[0]) * (b[3]-b[1]), reverse=True)
+        max_area = (final_boxes[0][2]-final_boxes[0][0]) * (final_boxes[0][3]-final_boxes[0][1])
+        final_boxes = [b for b in final_boxes if (b[2]-b[0]) * (b[3]-b[1]) > max_area * 0.3]
+
     return len(final_boxes), final_boxes
